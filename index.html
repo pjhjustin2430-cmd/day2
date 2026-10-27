@@ -20,10 +20,23 @@
       background: var(--cream);
       line-height: 1.6;
     }
-    .layout {
+    .page {
       max-width: 1000px;
       margin: 0 auto;
       padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+    }
+
+    /* ---------- 첫 번째 카드: 제주 특산물 (header/nav/section/article/aside/footer) ---------- */
+    .layout {
       display: grid;
       gap: 1rem;
       grid-template-columns: 2fr 1fr;
@@ -34,47 +47,38 @@
         "article aside"
         "footer  footer";
     }
-    header  { grid-area: header; }
-    nav     { grid-area: nav; }
-    section { grid-area: section; }
-    article { grid-area: article; }
-    aside   { grid-area: aside; }
-    footer  { grid-area: footer; }
+    .layout > header  { grid-area: header; }
+    .layout > nav     { grid-area: nav; }
+    .layout > section { grid-area: section; }
+    .layout > article { grid-area: article; }
+    .layout > aside   { grid-area: aside; }
+    .layout > footer  { grid-area: footer; }
 
-    header, nav, section, article, aside, footer {
-      background: #fff;
+    .layout > header, .layout > nav, .layout > section,
+    .layout > article, .layout > aside, .layout > footer {
+      background: var(--cream);
       border-radius: 14px;
       padding: 1.25rem 1.5rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
-    header {
+    .layout > header {
       background: linear-gradient(135deg, var(--orange), #fb923c);
       color: #fff;
       text-align: center;
       padding: 2rem 1rem;
     }
-    header h1 { margin: 0; font-size: 2rem; }
-    header p { margin: 0.5rem 0 0; opacity: 0.95; }
+    .layout > header h1 { margin: 0; font-size: 2rem; }
+    .layout > header p { margin: 0.5rem 0 0; opacity: 0.95; }
 
-    nav { padding: 0.5rem; }
-    nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.25rem;
+    .layout > nav { padding: 0.5rem; }
+    .layout > nav ul {
+      list-style: none; margin: 0; padding: 0;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem;
     }
-    nav a {
-      display: block;
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      color: var(--deep);
-      text-decoration: none;
-      font-weight: bold;
+    .layout > nav a {
+      display: block; padding: 0.5rem 1rem; border-radius: 999px;
+      color: var(--deep); text-decoration: none; font-weight: bold;
     }
-    nav a:hover { background: var(--cream); }
+    .layout > nav a:hover { background: #fff; }
 
     h2 { margin: 0 0 0.75rem; color: var(--deep); font-size: 1.3rem; }
     h3 { margin: 0 0 0.25rem; font-size: 1.05rem; }
@@ -84,30 +88,44 @@
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 0.75rem;
     }
-    .item {
-      background: var(--cream);
-      border-radius: 12px;
-      padding: 1rem;
-      text-align: center;
-    }
+    .item { background: #fff; border-radius: 12px; padding: 1rem; text-align: center; }
     .item .emoji { font-size: 2.2rem; }
     .item p { margin: 0.25rem 0 0; font-size: 0.85rem; color: #4b5563; }
 
-    article p { margin: 0.5rem 0; }
+    .layout > article p { margin: 0.5rem 0; }
     .quote {
       border-left: 4px solid var(--orange);
-      background: var(--cream);
+      background: #fff;
       padding: 0.5rem 1rem;
       margin: 1rem 0;
       border-radius: 0 8px 8px 0;
     }
 
-    aside h2 { color: var(--sea); }
-    aside table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    aside th, aside td { text-align: left; padding: 0.4rem 0.25rem; border-bottom: 1px solid #e5e7eb; }
-    aside ul { padding-left: 1.2rem; margin: 0.5rem 0 0; font-size: 0.9rem; }
+    .layout > aside h2 { color: var(--sea); }
+    .layout > aside table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .layout > aside th, .layout > aside td { text-align: left; padding: 0.4rem 0.25rem; border-bottom: 1px solid #e5e7eb; }
+    .layout > aside ul { padding-left: 1.2rem; margin: 0.5rem 0 0; font-size: 0.9rem; }
 
-    footer { text-align: center; font-size: 0.85rem; color: #6b7280; }
+    .layout > footer { text-align: center; font-size: 0.85rem; color: #6b7280; }
+
+    /* ---------- 두 번째 카드: Pixabay 이미지 슬라이드 ---------- */
+    .photo-card h2 { font-size: 1.4rem; }
+    form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    input { padding: 0.6rem; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 8px; }
+    #query { flex: 1 1 260px; }
+    form button { padding: 0.6rem 1.2rem; font-size: 1rem; border: 0; border-radius: 8px; background: #2563eb; color: #fff; cursor: pointer; }
+    #status { margin: 0.5rem 0; color: #475569; min-height: 1.5em; }
+    .slider { display: flex; align-items: center; gap: 0.5rem; }
+    .slider button { flex: none; font-size: 1.5rem; padding: 0.5rem 0.9rem; border: 0; border-radius: 8px; background: #2563eb; color: #fff; cursor: pointer; }
+    .slider button:disabled { background: #94a3b8; cursor: default; }
+    #photoGrid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+    }
+    #photoGrid a { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 8px; background: #e2e8f0; }
+    #photoGrid img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     @media (max-width: 720px) {
       .layout {
@@ -120,68 +138,143 @@
           "aside"
           "footer";
       }
+      #photoGrid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
 <body>
-  <div class="layout">
-    <header>
-      <h1>🍊 제주 특산물 이야기 🌴</h1>
-      <p>바람과 바다, 화산섬이 키운 제주의 맛을 만나보세요</p>
-    </header>
+  <div class="page">
 
-    <nav>
-      <ul>
-        <li><a href="#specialty">🍊 대표 특산물</a></li>
-        <li><a href="#story">📖 감귤 이야기</a></li>
-        <li><a href="#season">📅 출하 시기</a></li>
-        <li><a href="#tips">🎁 선물 팁</a></li>
-      </ul>
-    </nav>
+    <!-- 첫 번째 카드 -->
+    <div class="card">
+      <div class="layout">
+        <header>
+          <h1>🍊 제주 특산물 이야기 🌴</h1>
+          <p>바람과 바다, 화산섬이 키운 제주의 맛을 만나보세요</p>
+        </header>
 
-    <section id="specialty">
-      <h2>🍊 대표 특산물</h2>
-      <div class="grid">
-        <div class="item"><div class="emoji">🍊</div><h3>감귤</h3><p>새콤달콤 제주의 상징</p></div>
-        <div class="item"><div class="emoji">🍋</div><h3>한라봉</h3><p>향긋하고 과즙 가득</p></div>
-        <div class="item"><div class="emoji">🐖</div><h3>흑돼지</h3><p>쫄깃하고 고소한 맛</p></div>
-        <div class="item"><div class="emoji">🐟</div><h3>은갈치</h3><p>부드럽고 달콤한 살</p></div>
-        <div class="item"><div class="emoji">🐠</div><h3>옥돔</h3><p>담백한 제주 생선</p></div>
-        <div class="item"><div class="emoji">🍡</div><h3>오메기떡</h3><p>차조로 만든 전통 떡</p></div>
-        <div class="item"><div class="emoji">🥕</div><h3>구좌 당근</h3><p>단맛이 진한 당근</p></div>
-        <div class="item"><div class="emoji">🍵</div><h3>제주 녹차</h3><p>청정 자연의 향</p></div>
+        <nav>
+          <ul>
+            <li><a href="#specialty">🍊 대표 특산물</a></li>
+            <li><a href="#story">📖 감귤 이야기</a></li>
+            <li><a href="#season">📅 출하 시기</a></li>
+            <li><a href="#photos">🖼️ 이미지 슬라이드</a></li>
+          </ul>
+        </nav>
+
+        <section id="specialty">
+          <h2>🍊 대표 특산물</h2>
+          <div class="grid">
+            <div class="item"><div class="emoji">🍊</div><h3>감귤</h3><p>새콤달콤 제주의 상징</p></div>
+            <div class="item"><div class="emoji">🍋</div><h3>한라봉</h3><p>향긋하고 과즙 가득</p></div>
+            <div class="item"><div class="emoji">🐖</div><h3>흑돼지</h3><p>쫄깃하고 고소한 맛</p></div>
+            <div class="item"><div class="emoji">🐟</div><h3>은갈치</h3><p>부드럽고 달콤한 살</p></div>
+            <div class="item"><div class="emoji">🐠</div><h3>옥돔</h3><p>담백한 제주 생선</p></div>
+            <div class="item"><div class="emoji">🍡</div><h3>오메기떡</h3><p>차조로 만든 전통 떡</p></div>
+            <div class="item"><div class="emoji">🥕</div><h3>구좌 당근</h3><p>단맛이 진한 당근</p></div>
+            <div class="item"><div class="emoji">🍵</div><h3>제주 녹차</h3><p>청정 자연의 향</p></div>
+          </div>
+        </section>
+
+        <article id="story">
+          <h2>📖 감귤 이야기</h2>
+          <p>제주 감귤은 따뜻한 기후와 화산 토양, 바다에서 불어오는 바람 속에서 자랍니다. 그래서 단맛과 신맛이 조화로운 깊은 맛을 냅니다.</p>
+          <div class="quote">🍊 겨울 제주의 귤밭은 온통 주황빛으로 물듭니다.</div>
+          <p>노지 감귤은 가을 끝자락부터 겨울까지 수확하고, 한라봉·천혜향·레드향 같은 만감류는 겨울에서 봄 사이에 맛볼 수 있습니다.</p>
+          <p>비타민 C가 풍부해 간식으로도, 주스나 초콜릿 같은 가공품으로도 사랑받는 제주의 대표 먹거리입니다.</p>
+        </article>
+
+        <aside>
+          <h2 id="season">📅 출하 시기</h2>
+          <table>
+            <tr><th>특산물</th><th>제철</th></tr>
+            <tr><td>🍊 노지 감귤</td><td>10월~1월</td></tr>
+            <tr><td>🍋 한라봉</td><td>12월~3월</td></tr>
+            <tr><td>🥕 구좌 당근</td><td>겨울</td></tr>
+            <tr><td>🐟 갈치</td><td>여름~가을</td></tr>
+            <tr><td>🐖 흑돼지</td><td>연중</td></tr>
+          </table>
+          <h2 style="margin-top:1.25rem">🎁 선물 팁</h2>
+          <ul>
+            <li>감귤 초콜릿, 오메기떡은 가볍게 선물하기 좋아요.</li>
+            <li>과일은 제철에 맞춰 주문하세요.</li>
+            <li>신선식품은 냉장 배송 여부를 확인하세요.</li>
+          </ul>
+        </aside>
+
+        <footer>
+          🌺 제철과 가격은 해마다 달라질 수 있으니 판매처에서 확인해 주세요.
+        </footer>
       </div>
-    </section>
+    </div>
 
-    <article id="story">
-      <h2>📖 감귤 이야기</h2>
-      <p>제주 감귤은 따뜻한 기후와 화산 토양, 바다에서 불어오는 바람 속에서 자랍니다. 그래서 단맛과 신맛이 조화로운 깊은 맛을 냅니다.</p>
-      <div class="quote">🍊 겨울 제주의 귤밭은 온통 주황빛으로 물듭니다.</div>
-      <p>노지 감귤은 가을 끝자락부터 겨울까지 수확하고, 한라봉·천혜향·레드향 같은 만감류는 겨울에서 봄 사이에 맛볼 수 있습니다.</p>
-      <p>비타민 C가 풍부해 간식으로도, 주스나 초콜릿 같은 가공품으로도 사랑받는 제주의 대표 먹거리입니다.</p>
-    </article>
+    <!-- 두 번째 카드 -->
+    <div class="card photo-card" id="photos">
+      <h2>🖼️ Pixabay 이미지 슬라이드</h2>
 
-    <aside>
-      <h2 id="season">📅 출하 시기</h2>
-      <table>
-        <tr><th>특산물</th><th>제철</th></tr>
-        <tr><td>🍊 노지 감귤</td><td>10월~1월</td></tr>
-        <tr><td>🍋 한라봉</td><td>12월~3월</td></tr>
-        <tr><td>🥕 구좌 당근</td><td>겨울</td></tr>
-        <tr><td>🐟 갈치</td><td>여름~가을</td></tr>
-        <tr><td>🐖 흑돼지</td><td>연중</td></tr>
-      </table>
-      <h2 id="tips" style="margin-top:1.25rem">🎁 선물 팁</h2>
-      <ul>
-        <li>감귤 초콜릿, 오메기떡은 가볍게 선물하기 좋아요.</li>
-        <li>과일은 제철에 맞춰 주문하세요.</li>
-        <li>신선식품은 냉장 배송 여부를 확인하세요.</li>
-      </ul>
-    </aside>
+      <form id="form">
+        <input id="query" type="text" placeholder="검색어 (예: 제주감귤, 한라봉)" required>
+        <button type="submit">검색</button>
+      </form>
 
-    <footer>
-      🌺 제주 특산물 이야기 · 제철과 가격은 해마다 달라질 수 있으니 판매처에서 확인해 주세요.
-    </footer>
+      <div id="status"></div>
+
+      <div class="slider">
+        <button id="prev" disabled aria-label="이전 10개">◀</button>
+        <div id="photoGrid"></div>
+        <button id="next" disabled aria-label="다음 10개">▶</button>
+      </div>
+    </div>
+
   </div>
+
+  <script>
+    const PER_PAGE = 10;
+    const $ = (id) => document.getElementById(id);
+    let page = 1, query = '', total = 0;
+
+    async function load() {
+      $('status').textContent = '불러오는 중…';
+      $('prev').disabled = $('next').disabled = true;
+      const url = '/api/pixabay?' + new URLSearchParams({ q: query, page });
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '요청 실패 (' + res.status + ')');
+        total = data.totalHits;
+        render(data.hits);
+      } catch (e) {
+        $('status').textContent = '⚠️ ' + e.message;
+      }
+    }
+
+    function render(hits) {
+      const grid = $('photoGrid');
+      grid.replaceChildren();
+      for (const h of hits) {
+        const a = document.createElement('a');
+        a.href = h.pageURL; a.target = '_blank'; a.rel = 'noopener';
+        const img = document.createElement('img');
+        img.src = h.webformatURL; img.alt = h.tags; img.loading = 'lazy';
+        a.append(img);
+        grid.append(a);
+      }
+      const lastPage = Math.max(1, Math.ceil(total / PER_PAGE));
+      $('status').textContent = hits.length
+        ? `"${query}" 검색 결과 ${total}장 중 ${page} / ${lastPage} 페이지 (10장씩)`
+        : '검색 결과가 없습니다.';
+      $('prev').disabled = page <= 1;
+      $('next').disabled = page >= lastPage;
+    }
+
+    $('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      query = $('query').value.trim();
+      page = 1;
+      load();
+    });
+    $('prev').addEventListener('click', () => { page--; load(); });
+    $('next').addEventListener('click', () => { page++; load(); });
+  </script>
 </body>
 </html>
