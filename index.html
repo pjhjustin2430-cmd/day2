@@ -42,12 +42,14 @@
       grid-template-columns: 2fr 1fr;
       grid-template-areas:
         "header  header"
+        "photos  photos"
         "nav     nav"
         "section aside"
         "article aside"
         "footer  footer";
     }
     .layout > header  { grid-area: header; }
+    .layout > .photos { grid-area: photos; }
     .layout > nav     { grid-area: nav; }
     .layout > section { grid-area: section; }
     .layout > article { grid-area: article; }
@@ -108,30 +110,45 @@
 
     .layout > footer { text-align: center; font-size: 0.85rem; color: #6b7280; }
 
-    /* ---------- 두 번째 카드: Pixabay 이미지 슬라이드 ---------- */
-    .photo-card h2 { font-size: 1.4rem; }
-    form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-    input { padding: 0.6rem; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 8px; }
-    #query { flex: 1 1 260px; }
-    form button { padding: 0.6rem 1.2rem; font-size: 1rem; border: 0; border-radius: 8px; background: #2563eb; color: #fff; cursor: pointer; }
-    #status { margin: 0.5rem 0; color: #475569; min-height: 1.5em; }
+    /* ---------- 제목 아래: Pixabay 이미지 슬라이드 ---------- */
+    .layout > .photos { background: var(--cream); border-radius: 14px; padding: 1rem 1.25rem; }
+    .photos form { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .photos input {
+      flex: 1; min-width: 0; padding: 0.6rem 0.9rem; font-size: 1rem;
+      border: 1px solid #fed7aa; border-radius: 999px; background: #fff; outline: none;
+    }
+    .photos input:focus { border-color: var(--orange); }
+    .photos form button {
+      padding: 0.6rem 1.3rem; font-size: 1rem; border: 0; border-radius: 999px;
+      background: var(--orange); color: #fff; cursor: pointer;
+    }
+    .photos form button:hover { background: var(--deep); }
+    #status { margin: 0 0 0.5rem 0.25rem; color: #6b7280; font-size: 0.85rem; min-height: 1.3em; }
     .slider { display: flex; align-items: center; gap: 0.5rem; }
-    .slider button { flex: none; font-size: 1.5rem; padding: 0.5rem 0.9rem; border: 0; border-radius: 8px; background: #2563eb; color: #fff; cursor: pointer; }
-    .slider button:disabled { background: #94a3b8; cursor: default; }
+    .slider button {
+      flex: none; width: 2.5rem; height: 2.5rem; border: 0; border-radius: 50%;
+      background: #fff; color: var(--deep); font-size: 1rem; cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+    .slider button:hover:not(:disabled) { background: var(--orange); color: #fff; }
+    .slider button:disabled { opacity: 0.35; cursor: default; }
     #photoGrid {
       flex: 1;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 0.5rem;
+      gap: 0.4rem;
+      min-height: 3rem;
     }
-    #photoGrid a { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 8px; background: #e2e8f0; }
-    #photoGrid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    #photoGrid a { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 10px; background: #fde7d0; }
+    #photoGrid img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.2s; }
+    #photoGrid a:hover img { transform: scale(1.06); }
 
     @media (max-width: 720px) {
       .layout {
         grid-template-columns: 1fr;
         grid-template-areas:
           "header"
+          "photos"
           "nav"
           "section"
           "article"
@@ -152,6 +169,19 @@
           <h1>🍊 제주 특산물 이야기 🌴</h1>
           <p>바람과 바다, 화산섬이 키운 제주의 맛을 만나보세요</p>
         </header>
+
+        <div class="photos" id="photos">
+          <form id="form">
+            <input id="query" type="text" placeholder="🔍 이미지 검색 (예: 제주감귤, 한라봉)" required>
+            <button type="submit">검색</button>
+          </form>
+          <div id="status"></div>
+          <div class="slider">
+            <button id="prev" disabled aria-label="이전 10개">◀</button>
+            <div id="photoGrid"></div>
+            <button id="next" disabled aria-label="다음 10개">▶</button>
+          </div>
+        </div>
 
         <nav>
           <ul>
@@ -205,24 +235,6 @@
         <footer>
           🌺 제철과 가격은 해마다 달라질 수 있으니 판매처에서 확인해 주세요.
         </footer>
-      </div>
-    </div>
-
-    <!-- 두 번째 카드 -->
-    <div class="card photo-card" id="photos">
-      <h2>🖼️ Pixabay 이미지 슬라이드</h2>
-
-      <form id="form">
-        <input id="query" type="text" placeholder="검색어 (예: 제주감귤, 한라봉)" required>
-        <button type="submit">검색</button>
-      </form>
-
-      <div id="status"></div>
-
-      <div class="slider">
-        <button id="prev" disabled aria-label="이전 10개">◀</button>
-        <div id="photoGrid"></div>
-        <button id="next" disabled aria-label="다음 10개">▶</button>
       </div>
     </div>
 
