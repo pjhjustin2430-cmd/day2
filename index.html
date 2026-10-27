@@ -132,16 +132,42 @@
     }
     .slider button:hover:not(:disabled) { background: var(--orange); color: #fff; }
     .slider button:disabled { opacity: 0.35; cursor: default; }
-    #photoGrid {
+    #frame {
       flex: 1;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 0.4rem;
-      min-height: 3rem;
+      display: block;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #fde7d0;
+      position: relative;
     }
-    #photoGrid a { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 10px; background: #fde7d0; }
-    #photoGrid img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.2s; }
-    #photoGrid a:hover img { transform: scale(1.06); }
+    #frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    #frame .empty {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      color: #9a6b4b; font-size: 0.9rem;
+    }
+    #dots { display: flex; justify-content: center; gap: 0.35rem; margin-top: 0.6rem; min-height: 0.6rem; }
+    #dots span { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #fdba74; opacity: 0.5; }
+    #dots span.on { background: var(--orange); opacity: 1; }
+
+    /* ---------- 채팅 에이전트 버튼 + 패널 ---------- */
+    #chatBtn {
+      position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 10;
+      padding: 0.85rem 1.3rem; border: 0; border-radius: 999px;
+      background: var(--orange); color: #fff; font-size: 1rem; font-weight: bold;
+      cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    }
+    #chatBtn:hover { background: var(--deep); }
+    #chatPanel {
+      position: fixed; right: 1.25rem; bottom: 5rem; z-index: 10;
+      width: 380px; max-width: calc(100vw - 2.5rem);
+      height: 560px; max-height: calc(100vh - 7rem);
+      border-radius: 16px; overflow: hidden; background: #fff;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      display: none;
+    }
+    #chatPanel.open { display: block; }
+    #chatPanel iframe { width: 100%; height: 100%; border: 0; display: block; }
 
     @media (max-width: 720px) {
       .layout {
@@ -155,7 +181,6 @@
           "aside"
           "footer";
       }
-      #photoGrid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -177,10 +202,11 @@
           </form>
           <div id="status"></div>
           <div class="slider">
-            <button id="prev" disabled aria-label="이전 10개">◀</button>
-            <div id="photoGrid"></div>
-            <button id="next" disabled aria-label="다음 10개">▶</button>
+            <button id="prev" disabled aria-label="이전 이미지">◀</button>
+            <a id="frame" target="_blank" rel="noopener"><div class="empty">검색어를 입력하면 이미지가 0.5초마다 넘어갑니다</div></a>
+            <button id="next" disabled aria-label="다음 이미지">▶</button>
           </div>
+          <div id="dots"></div>
         </div>
 
         <nav>
@@ -240,53 +266,96 @@
 
   </div>
 
-  <script>
-    const PER_PAGE = 10;
-    const $ = (id) => document.getElementById(id);
-    let page = 1, query = '', total = 0;
+  <button id="chatBtn" type="button" aria-expanded="false" aria-controls="chatPanel">💬 에이전트와 채팅</button>
+  <div id="chatPanel"></div>
 
-    async function load() {
+  <script>
+    (function () {
+      const btn = document.getElementById('chatBtn');
+      const panel = document.getElementById('chatPanel');
+      btn.addEventListener('click', () => {
+        const open = panel.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open);
+        btn.textContent = open ? '✖ 채팅 닫기' : '💬 에이전트와 채팅';
+        if (open && !panel.firstChild) {
+          const frame = document.createElement('iframe');
+          frame.src = 'jeju-agent/agent.html';
+          frame.title = '제주 특산물 에이전트 채팅';
+          panel.append(frame);
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    const INTERVAL_MS = 500;
+    const $ = (id) => document.getElementById(id);
+    let query = '', hits = [], index = 0, timer = null, searchId = 0;
+
+    function stop() { clearInterval(timer); timer = null; }
+
+    function start() {
+      stop();
+      timer = setInterval(() => show(index + 1), INTERVAL_MS);
+    }
+
+    function show(i) {
+      index = (i + hits.length) % hits.length;
+      const h = hits[index];
+      const frame = $('frame');
+      frame.href = h.pageURL;
+      const img = document.createElement('img');
+      img.src = h.webformatURL;
+      img.alt = h.tags;
+      frame.replaceChildren(img);
+      $('status').textContent = `"${query}" · ${index + 1} / ${hits.length}`;
+      [...$('dots').children].forEach((d, n) => d.classList.toggle('on', n === index));
+    }
+
+    function preload(list) {
+      return Promise.all(list.map((h) => new Promise((resolve) => {
+        const img = new Image();
+        img.onload = img.onerror = resolve;
+        img.src = h.webformatURL;
+      })));
+    }
+
+    async function search() {
+      const id = ++searchId;
+      stop();
       $('status').textContent = '불러오는 중…';
       $('prev').disabled = $('next').disabled = true;
-      const url = '/api/pixabay?' + new URLSearchParams({ q: query, page });
       try {
-        const res = await fetch(url);
+        const res = await fetch('/api/pixabay?' + new URLSearchParams({ q: query, page: 1 }));
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '요청 실패 (' + res.status + ')');
-        total = data.totalHits;
-        render(data.hits);
+        if (id !== searchId) return;
+        if (!data.hits.length) {
+          hits = [];
+          $('frame').replaceChildren(Object.assign(document.createElement('div'), { className: 'empty', textContent: '검색 결과가 없습니다.' }));
+          $('dots').replaceChildren();
+          $('status').textContent = '';
+          return;
+        }
+        await preload(data.hits);
+        if (id !== searchId) return;
+        hits = data.hits;
+        $('dots').replaceChildren(...hits.map(() => document.createElement('span')));
+        $('prev').disabled = $('next').disabled = false;
+        show(0);
+        start();
       } catch (e) {
         $('status').textContent = '⚠️ ' + e.message;
       }
     }
 
-    function render(hits) {
-      const grid = $('photoGrid');
-      grid.replaceChildren();
-      for (const h of hits) {
-        const a = document.createElement('a');
-        a.href = h.pageURL; a.target = '_blank'; a.rel = 'noopener';
-        const img = document.createElement('img');
-        img.src = h.webformatURL; img.alt = h.tags; img.loading = 'lazy';
-        a.append(img);
-        grid.append(a);
-      }
-      const lastPage = Math.max(1, Math.ceil(total / PER_PAGE));
-      $('status').textContent = hits.length
-        ? `"${query}" 검색 결과 ${total}장 중 ${page} / ${lastPage} 페이지 (10장씩)`
-        : '검색 결과가 없습니다.';
-      $('prev').disabled = page <= 1;
-      $('next').disabled = page >= lastPage;
-    }
-
     $('form').addEventListener('submit', (e) => {
       e.preventDefault();
       query = $('query').value.trim();
-      page = 1;
-      load();
+      if (query) search();
     });
-    $('prev').addEventListener('click', () => { page--; load(); });
-    $('next').addEventListener('click', () => { page++; load(); });
+    $('prev').addEventListener('click', () => { show(index - 1); start(); });
+    $('next').addEventListener('click', () => { show(index + 1); start(); });
   </script>
 </body>
 </html>
