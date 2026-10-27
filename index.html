@@ -132,7 +132,10 @@
 
     /* ---------- 제목 아래: Pixabay 이미지 슬라이드 ---------- */
     .layout > .photos { background: var(--cream); border-radius: 14px; padding: 1rem 1.25rem; }
-    .photos form { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .photos form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .photos form input[hidden] { display: none; }
+    #localKey { flex: 1 1 100%; }
+    #query { flex: 1 1 180px; }
     .photos input {
       flex: 1; min-width: 0; padding: 0.6rem 0.9rem; font-size: 1rem;
       border: 1px solid #fed7aa; border-radius: 999px; background: #fff; outline: none;
@@ -263,6 +266,7 @@
 
         <div class="photos" id="photos">
           <form id="form">
+            <input id="localKey" type="password" placeholder="Pixabay API 키 (파일로 열었을 때만)" autocomplete="off" hidden>
             <input id="query" type="text" placeholder="🔍 이미지 검색 (예: 제주감귤, 한라봉)" required>
             <button type="submit">검색</button>
           </form>
@@ -354,6 +358,7 @@
   </script>
 
   <script>
+    const LOCAL_MODE = location.protocol === 'file:';
     const INTERVAL_MS = 500;
     const $ = (id) => document.getElementById(id);
     let query = '', hits = [], index = 0, timer = null, searchId = 0;
@@ -392,9 +397,18 @@
       $('status').textContent = '불러오는 중…';
       $('prev').disabled = $('next').disabled = true;
       try {
-        const res = await fetch('/api/pixabay?' + new URLSearchParams({ q: query, page: 1 }));
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '요청 실패 (' + res.status + ')');
+        // 서버(Vercel)에서는 /api/pixabay 로, 파일(file://)로 열었을 때는 입력한 키로 Pixabay 에 직접 요청
+        const res = await fetch(LOCAL_MODE
+          ? 'https://pixabay.com/api/?' + new URLSearchParams({
+              key: $('localKey').value.trim(), q: query, image_type: 'photo', per_page: 10, page: 1,
+            })
+          : '/api/pixabay?' + new URLSearchParams({ q: query, page: 1 }));
+        const raw = await res.text();
+        let data = {};
+        try { data = JSON.parse(raw); } catch (_) {}
+        if (!res.ok) {
+          throw new Error(data.error || (LOCAL_MODE && res.status === 400 ? 'API 키를 확인해 주세요.' : '요청 실패 (' + res.status + ')'));
+        }
         if (id !== searchId) return;
         if (!data.hits.length) {
           hits = [];
@@ -414,6 +428,8 @@
         $('status').textContent = '⚠️ ' + e.message;
       }
     }
+
+    if (LOCAL_MODE) { $('localKey').hidden = false; $('localKey').required = true; }
 
     $('form').addEventListener('submit', (e) => {
       e.preventDefault();
