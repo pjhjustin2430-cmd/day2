@@ -72,6 +72,25 @@
     .layout > header h1 { margin: 0; font-size: clamp(1.4rem, 5vw, 2.2rem); line-height: 1.25; }
     .layout > header p { margin: 0.5rem 0 0; opacity: 0.95; font-size: clamp(0.85rem, 2.4vw, 1rem); }
 
+    /* 큰 원형 버튼: reactive.html 로 이동 */
+    .launch {
+      width: clamp(96px, 22vw, 140px);
+      aspect-ratio: 1;
+      margin: 1rem auto 0;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--deep);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: clamp(0.85rem, 2.4vw, 1.05rem);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .launch:hover { transform: scale(1.06); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3); }
+    .launch:active { transform: scale(0.97); }
+    .launch-icon { font-size: clamp(1.8rem, 6vw, 2.6rem); line-height: 1; }
+
     .layout > nav { padding: 0.5rem; }
     .layout > nav ul {
       list-style: none; margin: 0; padding: 0;
@@ -236,6 +255,10 @@
         <header>
           <h1>🍊 제주 특산물 이야기 🌴</h1>
           <p>바람과 바다, 화산섬이 키운 제주의 맛을 만나보세요</p>
+          <a class="launch" href="reactive.html" aria-label="카테고리 메뉴 열기">
+            <span class="launch-icon">🧭</span>
+            <span>카테고리</span>
+          </a>
         </header>
 
         <div class="photos" id="photos">
