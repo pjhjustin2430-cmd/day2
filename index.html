@@ -20,10 +20,11 @@
       background: var(--cream);
       line-height: 1.6;
     }
+    img { max-width: 100%; }
     .page {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 1rem;
+      padding: clamp(0.5rem, 2.5vw, 1.5rem);
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
@@ -32,14 +33,14 @@
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-      padding: 1rem;
+      padding: clamp(0.5rem, 2vw, 1rem);
     }
 
     /* ---------- 첫 번째 카드: 제주 특산물 (header/nav/section/article/aside/footer) ---------- */
     .layout {
       display: grid;
-      gap: 1rem;
-      grid-template-columns: 2fr 1fr;
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
       grid-template-areas:
         "header  header"
         "photos  photos"
@@ -60,16 +61,16 @@
     .layout > article, .layout > aside, .layout > footer {
       background: var(--cream);
       border-radius: 14px;
-      padding: 1.25rem 1.5rem;
+      padding: clamp(1rem, 2.5vw, 1.5rem);
     }
     .layout > header {
       background: linear-gradient(135deg, var(--orange), #fb923c);
       color: #fff;
       text-align: center;
-      padding: 2rem 1rem;
+      padding: clamp(1.25rem, 4vw, 2.25rem) 1rem;
     }
-    .layout > header h1 { margin: 0; font-size: 2rem; }
-    .layout > header p { margin: 0.5rem 0 0; opacity: 0.95; }
+    .layout > header h1 { margin: 0; font-size: clamp(1.4rem, 5vw, 2.2rem); line-height: 1.25; }
+    .layout > header p { margin: 0.5rem 0 0; opacity: 0.95; font-size: clamp(0.85rem, 2.4vw, 1rem); }
 
     .layout > nav { padding: 0.5rem; }
     .layout > nav ul {
@@ -82,12 +83,12 @@
     }
     .layout > nav a:hover { background: #fff; }
 
-    h2 { margin: 0 0 0.75rem; color: var(--deep); font-size: 1.3rem; }
+    h2 { margin: 0 0 0.75rem; color: var(--deep); font-size: clamp(1.1rem, 3vw, 1.3rem); }
     h3 { margin: 0 0 0.25rem; font-size: 1.05rem; }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr));
       gap: 0.75rem;
     }
     .item { background: #fff; border-radius: 12px; padding: 1rem; text-align: center; }
@@ -162,6 +163,7 @@
       position: fixed; right: 1.25rem; bottom: 5rem; z-index: 10;
       width: 380px; max-width: calc(100vw - 2.5rem);
       height: 560px; max-height: calc(100vh - 7rem);
+      max-height: calc(100dvh - 7rem);
       border-radius: 16px; overflow: hidden; background: #fff;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
       display: none;
@@ -169,7 +171,9 @@
     #chatPanel.open { display: block; }
     #chatPanel iframe { width: 100%; height: 100%; border: 0; display: block; }
 
-    @media (max-width: 720px) {
+    /* ---------- 반응형 ---------- */
+    /* 태블릿·모바일: 한 줄로 쌓기 */
+    @media (max-width: 640px) {
       .layout {
         grid-template-columns: 1fr;
         grid-template-areas:
@@ -181,7 +185,46 @@
           "aside"
           "footer";
       }
+      .layout > nav a { padding: 0.45rem 0.8rem; font-size: 0.9rem; }
+      .layout > .photos { padding: 0.75rem; }
+      .slider { gap: 0.3rem; }
+      .slider button { width: 2.1rem; height: 2.1rem; }
     }
+
+    /* 작은 모바일 */
+    @media (max-width: 480px) {
+      body { font-size: 15px; }
+      .photos form button { padding: 0.6rem 1rem; }
+      #frame { aspect-ratio: 4 / 3; }
+      /* 채팅은 화면 아래쪽을 거의 다 쓰는 시트 형태 */
+      #chatPanel {
+        left: 0.5rem; right: 0.5rem; bottom: 4.5rem;
+        width: auto; max-width: none; height: auto;
+        top: 0.5rem; max-height: none;
+      }
+      #chatBtn { right: 0.75rem; bottom: 0.75rem; padding: 0.75rem 1.1rem; }
+    }
+
+    /* 중간 폭(태블릿·좁은 PC 창): 2열을 유지하되 간격과 글자를 줄임 */
+    @media (min-width: 641px) and (max-width: 900px) {
+      .layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+      .layout > section, .layout > article, .layout > aside { padding: 1rem; }
+      .layout > aside table, .layout > aside ul { font-size: 0.85rem; }
+    }
+
+    /* 터치 기기(손가락)에서는 누르기 쉽게 버튼을 키움 */
+    @media (pointer: coarse) {
+      .layout > nav a { padding: 0.65rem 1rem; }
+      .slider button { width: 2.75rem; height: 2.75rem; }
+      #chatBtn { padding: 0.95rem 1.4rem; }
+    }
+
+    /* 넓은 PC 화면 */
+    @media (min-width: 1200px) {
+      .layout { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); }
+      #frame { aspect-ratio: 21 / 9; }
+    }
+
   </style>
 </head>
 <body>
