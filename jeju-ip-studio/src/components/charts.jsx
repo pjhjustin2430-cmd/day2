@@ -9,6 +9,13 @@ export const man = (n) => {
 }
 export const num = (n) => (n == null ? '미집계' : `${Math.round(n).toLocaleString('ko-KR')}명`)
 
+// 막대 색을 어둡게 (최고 월 강조용). 관광지 색이 무엇이든 "더 진한 같은 계열"이라 구분됨
+function darken(hex, k = 0.62) {
+  const n = parseInt(hex.replace('#', ''), 16)
+  const c = (v) => Math.round(v * k).toString(16).padStart(2, '0')
+  return `#${c((n >> 16) & 255)}${c((n >> 8) & 255)}${c(n & 255)}`
+}
+
 // 눈금이 깔끔하게 떨어지도록 최댓값을 올림
 function niceMax(v) {
   if (v <= 0) return 1
@@ -51,7 +58,8 @@ export function BarChart({ data, color = '#0e7c86', height = 280, width = 900 })
             <g key={i}>
               {d.value == null
                 ? <rect x={bx} y={T + ih - 14} width={w} height={14} fill={`url(#hatch-${uid})`} />
-                : <rect x={bx} y={y(d.value)} width={w} height={Math.max(0, T + ih - y(d.value))} rx={Math.min(3, w / 3)} fill={d.hot ? '#ff8a1f' : color} opacity={hov == null || hov === i ? 1 : 0.55} />}
+                : <rect x={bx} y={y(d.value)} width={w} height={Math.max(0, T + ih - y(d.value))} rx={Math.min(3, w / 3)} fill={d.hot ? darken(color) : color} opacity={hov == null || hov === i ? 1 : 0.55} />}
+              {d.hot && d.value != null && <text x={x + bw / 2} y={y(d.value) - 5} textAnchor="middle" className="peak-star">★</text>}
               {d.tick && <text x={x + bw / 2} y={H - 9} textAnchor="middle" className="axis-text">{d.tick}</text>}
               <rect x={x} y={T} width={bw} height={ih} fill="transparent" onMouseEnter={() => setHov(i)} onClick={() => setHov(i)} />
             </g>

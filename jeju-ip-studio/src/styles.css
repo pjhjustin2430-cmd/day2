@@ -224,6 +224,7 @@ code { background: rgba(0, 0, 0, .06); padding: 1px 6px; border-radius: 6px; fon
 .chart { width: 100%; height: auto; display: block; }
 .grid-line { stroke: #ece6d8; stroke-width: 1; }
 .axis-text { fill: #8a8f96; font-size: 12px; font-family: 'Noto Sans KR', sans-serif; }
+.peak-star { fill: #e8590c; font-size: 15px; font-family: 'Noto Sans KR', sans-serif; }
 .tip-box { fill: rgba(30, 36, 40, .94); }
 .tip-title { fill: #cfd6dc; font-size: 12px; }
 .tip-value { fill: #fff; font-size: 15px; font-weight: 700; }

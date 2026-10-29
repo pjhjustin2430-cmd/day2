@@ -116,7 +116,7 @@ export default function Stats() {
                 <div className="seg">{RANGES.map((r) => <button key={r.k} className={range === r.k ? 'on' : ''} onClick={() => setRange(r.k)}>{r.label}</button>)}</div>
               </div>
               <BarChart data={trend} color={color} />
-              <p className="chart-note">주황색 막대가 이 기간의 최고 월이에요. 빗금은 데이터가 집계되지 않은 달입니다.{spot === ALL && ' 전체 합계는 집계된 관광지만 더한 값이에요.'}</p>
+              <p className="chart-note">★ 표시가 붙은 진한 막대가 이 기간의 최고 월이에요. 빗금은 데이터가 집계되지 않은 달입니다.{spot === ALL && ' 전체 합계는 집계된 관광지만 더한 값이에요.'}</p>
             </div>
 
             <div className="two-col">
