@@ -1,443 +1,236 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>제주 특산물 이야기</title>
-  <style>
-    * { box-sizing: border-box; }
-    :root {
-      --orange: #f97316;
-      --deep: #c2410c;
-      --sea: #0e7490;
-      --cream: #fff7ed;
-      --ink: #1f2937;
-    }
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      color: var(--ink);
-      background: var(--cream);
-      line-height: 1.6;
-    }
-    img { max-width: 100%; }
-    .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: clamp(0.5rem, 2.5vw, 1.5rem);
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-      padding: clamp(0.5rem, 2vw, 1rem);
-    }
-
-    /* ---------- 첫 번째 카드: 제주 특산물 (header/nav/section/article/aside/footer) ---------- */
-    .layout {
-      display: grid;
-      gap: clamp(0.5rem, 1.5vw, 1rem);
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-      grid-template-areas:
-        "header  header"
-        "photos  photos"
-        "nav     nav"
-        "section aside"
-        "article aside"
-        "footer  footer";
-    }
-    .layout > header  { grid-area: header; }
-    .layout > .photos { grid-area: photos; }
-    .layout > nav     { grid-area: nav; }
-    .layout > section { grid-area: section; }
-    .layout > article { grid-area: article; }
-    .layout > aside   { grid-area: aside; }
-    .layout > footer  { grid-area: footer; }
-
-    .layout > header, .layout > nav, .layout > section,
-    .layout > article, .layout > aside, .layout > footer {
-      background: var(--cream);
-      border-radius: 14px;
-      padding: clamp(1rem, 2.5vw, 1.5rem);
-    }
-    .layout > header {
-      background: linear-gradient(135deg, var(--orange), #fb923c);
-      color: #fff;
-      text-align: center;
-      padding: clamp(1.25rem, 4vw, 2.25rem) 1rem;
-    }
-    .layout > header h1 { margin: 0; font-size: clamp(1.4rem, 5vw, 2.2rem); line-height: 1.25; }
-    .layout > header p { margin: 0.5rem 0 0; opacity: 0.95; font-size: clamp(0.85rem, 2.4vw, 1rem); }
-
-    /* 큰 원형 버튼: reactive.html 로 이동 */
-    .launch {
-      width: clamp(96px, 22vw, 140px);
-      aspect-ratio: 1;
-      margin: 1rem auto 0;
-      border-radius: 50%;
-      background: #fff;
-      color: var(--deep);
-      text-decoration: none;
-      font-weight: bold;
-      font-size: clamp(0.85rem, 2.4vw, 1.05rem);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .launch:hover { transform: scale(1.06); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3); }
-    .launch:active { transform: scale(0.97); }
-    .launch-icon { font-size: clamp(1.8rem, 6vw, 2.6rem); line-height: 1; }
-
-    .layout > nav { padding: 0.5rem; }
-    .layout > nav ul {
-      list-style: none; margin: 0; padding: 0;
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem;
-    }
-    .layout > nav a {
-      display: block; padding: 0.5rem 1rem; border-radius: 999px;
-      color: var(--deep); text-decoration: none; font-weight: bold;
-    }
-    .layout > nav a:hover { background: #fff; }
-
-    h2 { margin: 0 0 0.75rem; color: var(--deep); font-size: clamp(1.1rem, 3vw, 1.3rem); }
-    h3 { margin: 0 0 0.25rem; font-size: 1.05rem; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr));
-      gap: 0.75rem;
-    }
-    .item { background: #fff; border-radius: 12px; padding: 1rem; text-align: center; }
-    .item .emoji { font-size: 2.2rem; }
-    .item p { margin: 0.25rem 0 0; font-size: 0.85rem; color: #4b5563; }
-
-    .layout > article p { margin: 0.5rem 0; }
-    .quote {
-      border-left: 4px solid var(--orange);
-      background: #fff;
-      padding: 0.5rem 1rem;
-      margin: 1rem 0;
-      border-radius: 0 8px 8px 0;
-    }
-
-    .layout > aside h2 { color: var(--sea); }
-    .layout > aside table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .layout > aside th, .layout > aside td { text-align: left; padding: 0.4rem 0.25rem; border-bottom: 1px solid #e5e7eb; }
-    .layout > aside ul { padding-left: 1.2rem; margin: 0.5rem 0 0; font-size: 0.9rem; }
-
-    .layout > footer { text-align: center; font-size: 0.85rem; color: #6b7280; }
-
-    /* ---------- 제목 아래: Pixabay 이미지 슬라이드 ---------- */
-    .layout > .photos { background: var(--cream); border-radius: 14px; padding: 1rem 1.25rem; }
-    .photos form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
-    .photos form input[hidden] { display: none; }
-    #localKey { flex: 1 1 100%; }
-    #query { flex: 1 1 180px; }
-    .photos input {
-      flex: 1; min-width: 0; padding: 0.6rem 0.9rem; font-size: 1rem;
-      border: 1px solid #fed7aa; border-radius: 999px; background: #fff; outline: none;
-    }
-    .photos input:focus { border-color: var(--orange); }
-    .photos form button {
-      padding: 0.6rem 1.3rem; font-size: 1rem; border: 0; border-radius: 999px;
-      background: var(--orange); color: #fff; cursor: pointer;
-    }
-    .photos form button:hover { background: var(--deep); }
-    #status { margin: 0 0 0.5rem 0.25rem; color: #6b7280; font-size: 0.85rem; min-height: 1.3em; }
-    .slider { display: flex; align-items: center; gap: 0.5rem; }
-    .slider button {
-      flex: none; width: 2.5rem; height: 2.5rem; border: 0; border-radius: 50%;
-      background: #fff; color: var(--deep); font-size: 1rem; cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-    }
-    .slider button:hover:not(:disabled) { background: var(--orange); color: #fff; }
-    .slider button:disabled { opacity: 0.35; cursor: default; }
-    #frame {
-      flex: 1;
-      display: block;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-      border-radius: 12px;
-      background: #fde7d0;
-      position: relative;
-    }
-    #frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    #frame .empty {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      color: #9a6b4b; font-size: 0.9rem;
-    }
-    #dots { display: flex; justify-content: center; gap: 0.35rem; margin-top: 0.6rem; min-height: 0.6rem; }
-    #dots span { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #fdba74; opacity: 0.5; }
-    #dots span.on { background: var(--orange); opacity: 1; }
-
-    /* ---------- 채팅 에이전트 버튼 + 패널 ---------- */
-    #chatBtn {
-      position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 10;
-      padding: 0.85rem 1.3rem; border: 0; border-radius: 999px;
-      background: var(--orange); color: #fff; font-size: 1rem; font-weight: bold;
-      cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-    }
-    #chatBtn:hover { background: var(--deep); }
-    #chatPanel {
-      position: fixed; right: 1.25rem; bottom: 5rem; z-index: 10;
-      width: 380px; max-width: calc(100vw - 2.5rem);
-      height: 560px; max-height: calc(100vh - 7rem);
-      max-height: calc(100dvh - 7rem);
-      border-radius: 16px; overflow: hidden; background: #fff;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-      display: none;
-    }
-    #chatPanel.open { display: block; }
-    #chatPanel iframe { width: 100%; height: 100%; border: 0; display: block; }
-
-    /* ---------- 반응형 ---------- */
-    /* 태블릿·모바일: 한 줄로 쌓기 */
-    @media (max-width: 640px) {
-      .layout {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-          "header"
-          "photos"
-          "nav"
-          "section"
-          "article"
-          "aside"
-          "footer";
-      }
-      .layout > nav a { padding: 0.45rem 0.8rem; font-size: 0.9rem; }
-      .layout > .photos { padding: 0.75rem; }
-      .slider { gap: 0.3rem; }
-      .slider button { width: 2.1rem; height: 2.1rem; }
-    }
-
-    /* 작은 모바일 */
-    @media (max-width: 480px) {
-      body { font-size: 15px; }
-      .photos form button { padding: 0.6rem 1rem; }
-      #frame { aspect-ratio: 4 / 3; }
-      /* 채팅은 화면 아래쪽을 거의 다 쓰는 시트 형태 */
-      #chatPanel {
-        left: 0.5rem; right: 0.5rem; bottom: 4.5rem;
-        width: auto; max-width: none; height: auto;
-        top: 0.5rem; max-height: none;
-      }
-      #chatBtn { right: 0.75rem; bottom: 0.75rem; padding: 0.75rem 1.1rem; }
-    }
-
-    /* 중간 폭(태블릿·좁은 PC 창): 2열을 유지하되 간격과 글자를 줄임 */
-    @media (min-width: 641px) and (max-width: 900px) {
-      .layout { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
-      .layout > section, .layout > article, .layout > aside { padding: 1rem; }
-      .layout > aside table, .layout > aside ul { font-size: 0.85rem; }
-    }
-
-    /* 터치 기기(손가락)에서는 누르기 쉽게 버튼을 키움 */
-    @media (pointer: coarse) {
-      .layout > nav a { padding: 0.65rem 1rem; }
-      .slider button { width: 2.75rem; height: 2.75rem; }
-      #chatBtn { padding: 0.95rem 1.4rem; }
-    }
-
-    /* 넓은 PC 화면 */
-    @media (min-width: 1200px) {
-      .layout { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); }
-      #frame { aspect-ratio: 21 / 9; }
-    }
-
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three.js Galaxy</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #05060f; overflow: hidden; }
+  canvas { display: block; }
+  #intro {
+    position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px; color: #dfe6ff;
+    background: rgba(5, 6, 15, .55); backdrop-filter: blur(2px); font-family: system-ui, sans-serif;
+  }
+  #intro h1 { margin: 0; font-size: 40px; letter-spacing: .04em; }
+  #intro p { margin: 0 0 20px; color: #9aa4d6; }
+  #start {
+    padding: 12px 32px; font-size: 18px; color: #fff; cursor: pointer;
+    border: 1px solid #7f93ff; border-radius: 999px; background: #1b2260;
+    box-shadow: 0 0 24px #4a6dff88; transition: transform .15s;
+  }
+  #start:hover { transform: scale(1.06); }
+  #hint {
+    position: fixed; left: 16px; bottom: 12px; color: #9aa4d6;
+    font: 13px/1.4 system-ui, sans-serif; pointer-events: none; opacity: .8;
+  }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
 </head>
 <body>
-  <div class="page">
+<div id="intro">
+  <h1>Three.js Galaxy</h1>
+  <p>은하 · 행성 · 우주선</p>
+  <button id="start">▶ 시작</button>
+</div>
+<div id="hint">마우스 드래그: 회전 · 휠: 확대/축소 · C: 우주선 추적 시점</div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    <!-- 첫 번째 카드 -->
-    <div class="card">
-      <div class="layout">
-        <header>
-          <h1>🍊 제주 특산물 이야기 🌴</h1>
-          <p>바람과 바다, 화산섬이 키운 제주의 맛을 만나보세요</p>
-          <a class="launch" href="reactive.html" aria-label="카테고리 메뉴 열기">
-            <span class="launch-icon">🧭</span>
-            <span>카테고리</span>
-          </a>
-        </header>
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x05060f, 0.035);
 
-        <div class="photos" id="photos">
-          <form id="form">
-            <input id="localKey" type="password" placeholder="Pixabay API 키 (파일로 열었을 때만)" autocomplete="off" hidden>
-            <input id="query" type="text" placeholder="🔍 이미지 검색 (예: 제주감귤, 한라봉)" required>
-            <button type="submit">검색</button>
-          </form>
-          <div id="status"></div>
-          <div class="slider">
-            <button id="prev" disabled aria-label="이전 이미지">◀</button>
-            <a id="frame" target="_blank" rel="noopener"><div class="empty">검색어를 입력하면 이미지가 0.5초마다 넘어갑니다</div></a>
-            <button id="next" disabled aria-label="다음 이미지">▶</button>
-          </div>
-          <div id="dots"></div>
-        </div>
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 200);
+camera.position.set(0, 6, 12);
 
-        <nav>
-          <ul>
-            <li><a href="#specialty">🍊 대표 특산물</a></li>
-            <li><a href="#story">📖 감귤 이야기</a></li>
-            <li><a href="#season">📅 출하 시기</a></li>
-            <li><a href="#photos">🖼️ 이미지 슬라이드</a></li>
-          </ul>
-        </nav>
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
 
-        <section id="specialty">
-          <h2>🍊 대표 특산물</h2>
-          <div class="grid">
-            <div class="item"><div class="emoji">🍊</div><h3>감귤</h3><p>새콤달콤 제주의 상징</p></div>
-            <div class="item"><div class="emoji">🍋</div><h3>한라봉</h3><p>향긋하고 과즙 가득</p></div>
-            <div class="item"><div class="emoji">🐖</div><h3>흑돼지</h3><p>쫄깃하고 고소한 맛</p></div>
-            <div class="item"><div class="emoji">🐟</div><h3>은갈치</h3><p>부드럽고 달콤한 살</p></div>
-            <div class="item"><div class="emoji">🐠</div><h3>옥돔</h3><p>담백한 제주 생선</p></div>
-            <div class="item"><div class="emoji">🍡</div><h3>오메기떡</h3><p>차조로 만든 전통 떡</p></div>
-            <div class="item"><div class="emoji">🥕</div><h3>구좌 당근</h3><p>단맛이 진한 당근</p></div>
-            <div class="item"><div class="emoji">🍵</div><h3>제주 녹차</h3><p>청정 자연의 향</p></div>
-          </div>
-        </section>
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.6;
 
-        <article id="story">
-          <h2>📖 감귤 이야기</h2>
-          <p>제주 감귤은 따뜻한 기후와 화산 토양, 바다에서 불어오는 바람 속에서 자랍니다. 그래서 단맛과 신맛이 조화로운 깊은 맛을 냅니다.</p>
-          <div class="quote">🍊 겨울 제주의 귤밭은 온통 주황빛으로 물듭니다.</div>
-          <p>노지 감귤은 가을 끝자락부터 겨울까지 수확하고, 한라봉·천혜향·레드향 같은 만감류는 겨울에서 봄 사이에 맛볼 수 있습니다.</p>
-          <p>비타민 C가 풍부해 간식으로도, 주스나 초콜릿 같은 가공품으로도 사랑받는 제주의 대표 먹거리입니다.</p>
-        </article>
+// --- 은하 파티클 ---
+const COUNT = 30000, ARMS = 4, RADIUS = 10;
+const pos = new Float32Array(COUNT * 3);
+const col = new Float32Array(COUNT * 3);
+const inner = new THREE.Color('#ffb36b'), outer = new THREE.Color('#4a6dff');
+for (let i = 0; i < COUNT; i++) {
+  const r = Math.pow(Math.random(), 1.5) * RADIUS;
+  const arm = ((i % ARMS) / ARMS) * Math.PI * 2;
+  const spin = r * 0.7;
+  const rnd = () => Math.pow(Math.random(), 3) * (Math.random() < .5 ? 1 : -1) * 0.5 * (0.3 + r * 0.15);
+  pos[i*3]   = Math.cos(arm + spin) * r + rnd();
+  pos[i*3+1] = rnd() * 0.6;
+  pos[i*3+2] = Math.sin(arm + spin) * r + rnd();
+  const c = inner.clone().lerp(outer, r / RADIUS);
+  col.set([c.r, c.g, c.b], i * 3);
+}
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+const galaxy = new THREE.Points(geo, new THREE.PointsMaterial({
+  size: 0.045, vertexColors: true, sizeAttenuation: true,
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+}));
+scene.add(galaxy);
 
-        <aside>
-          <h2 id="season">📅 출하 시기</h2>
-          <table>
-            <tr><th>특산물</th><th>제철</th></tr>
-            <tr><td>🍊 노지 감귤</td><td>10월~1월</td></tr>
-            <tr><td>🍋 한라봉</td><td>12월~3월</td></tr>
-            <tr><td>🥕 구좌 당근</td><td>겨울</td></tr>
-            <tr><td>🐟 갈치</td><td>여름~가을</td></tr>
-            <tr><td>🐖 흑돼지</td><td>연중</td></tr>
-          </table>
-          <h2 style="margin-top:1.25rem">🎁 선물 팁</h2>
-          <ul>
-            <li>감귤 초콜릿, 오메기떡은 가볍게 선물하기 좋아요.</li>
-            <li>과일은 제철에 맞춰 주문하세요.</li>
-            <li>신선식품은 냉장 배송 여부를 확인하세요.</li>
-          </ul>
-        </aside>
+// --- 중앙 토러스 매듭 ---
+const knot = new THREE.Mesh(
+  new THREE.TorusKnotGeometry(0.9, 0.28, 220, 32),
+  new THREE.MeshStandardMaterial({ color: 0xffd2a1, emissive: 0xff7a1a, emissiveIntensity: 0.9, metalness: 0.6, roughness: 0.25 })
+);
+scene.add(knot);
+const light = new THREE.PointLight(0xffa860, 40, 30);
+scene.add(light, new THREE.AmbientLight(0x334066, 0.6));
 
-        <footer>
-          🌺 제철과 가격은 해마다 달라질 수 있으니 판매처에서 확인해 주세요.
-        </footer>
-      </div>
-    </div>
+// --- 궤도를 도는 행성 ---
+const planets = [
+  { r: 3.5, s: 0.9, size: 0.22, color: 0x66e0ff },
+  { r: 5.5, s: 0.55, size: 0.32, color: 0xff6b9a },
+  { r: 7.5, s: 0.35, size: 0.28, color: 0xb6ff7a },
+].map(p => {
+  const m = new THREE.Mesh(
+    new THREE.SphereGeometry(p.size, 32, 32),
+    new THREE.MeshStandardMaterial({ color: p.color, emissive: p.color, emissiveIntensity: 0.5 })
+  );
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(p.r - 0.01, p.r + 0.01, 128),
+    new THREE.MeshBasicMaterial({ color: 0x8899ff, transparent: true, opacity: 0.25, side: THREE.DoubleSide })
+  );
+  ring.rotation.x = Math.PI / 2;
+  scene.add(m, ring);
+  return { ...p, mesh: m };
+});
 
-  </div>
+// --- 배경 별 ---
+const bg = new Float32Array(3000 * 3);
+for (let i = 0; i < bg.length; i++) bg[i] = (Math.random() - 0.5) * 120;
+const bgGeo = new THREE.BufferGeometry();
+bgGeo.setAttribute('position', new THREE.BufferAttribute(bg, 3));
+scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ size: 1.5, sizeAttenuation: false, color: 0xffffff, transparent: true, opacity: 0.6, fog: false })));
 
-  <button id="chatBtn" type="button" aria-expanded="false" aria-controls="chatPanel">💬 에이전트와 채팅</button>
-  <div id="chatPanel"></div>
+// --- 우주선 ---
+const shipPath = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-14, 3, 10), new THREE.Vector3(-6, -1, 5), new THREE.Vector3(-2, 0.5, 6.5),
+  new THREE.Vector3(5, 1.5, 4), new THREE.Vector3(12, 4, -2), new THREE.Vector3(7, -1, -9),
+  new THREE.Vector3(-2, 1, -6), new THREE.Vector3(-9, 3, -8), new THREE.Vector3(-15, 1, 0),
+], true, 'catmullrom', 0.5);
 
-  <script>
-    (function () {
-      const btn = document.getElementById('chatBtn');
-      const panel = document.getElementById('chatPanel');
-      btn.addEventListener('click', () => {
-        const open = panel.classList.toggle('open');
-        btn.setAttribute('aria-expanded', open);
-        btn.textContent = open ? '✖ 채팅 닫기' : '💬 에이전트와 채팅';
-        if (open && !panel.firstChild) {
-          const frame = document.createElement('iframe');
-          frame.src = 'jeju-agent/agent.html';
-          frame.title = '제주 특산물 에이전트 채팅';
-          panel.append(frame);
-        }
-      });
-    })();
-  </script>
+const ship = new THREE.Group();
+const hullMat = new THREE.MeshStandardMaterial({ color: 0xdfe6ff, metalness: 0.8, roughness: 0.3 });
+const body = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.9, 16), hullMat);
+body.rotation.x = Math.PI / 2;               // 원뿔 끝이 +z(진행 방향)
+const wings = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.025, 0.28), hullMat);
+wings.position.z = -0.25;
+const fin = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.2, 0.25), hullMat);
+fin.position.set(0, 0.1, -0.3);
+const cockpit = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16),
+  new THREE.MeshStandardMaterial({ color: 0x66e0ff, emissive: 0x2299ff, emissiveIntensity: 1 }));
+cockpit.position.set(0, 0.07, 0.1);
+const flame = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.5, 12),
+  new THREE.MeshBasicMaterial({ color: 0x66ccff, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending }));
+flame.rotation.x = -Math.PI / 2;             // 뒤쪽(-z)으로 분사
+flame.position.z = -0.7;
+const shipLight = new THREE.PointLight(0x66ccff, 3, 4);
+shipLight.position.z = -0.6;
+ship.add(body, wings, fin, cockpit, flame, shipLight);
+ship.scale.setScalar(1.4);
+scene.add(ship);
 
-  <script>
-    const LOCAL_MODE = location.protocol === 'file:';
-    const INTERVAL_MS = 500;
-    const $ = (id) => document.getElementById(id);
-    let query = '', hits = [], index = 0, timer = null, searchId = 0;
+// 궤적(꼬리)
+const TRAIL = 160;
+const trailPos = new Float32Array(TRAIL * 3);
+const trailCol = new Float32Array(TRAIL * 3);
+const trailGeo = new THREE.BufferGeometry();
+trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3));
+trailGeo.setAttribute('color', new THREE.BufferAttribute(trailCol, 3));
+scene.add(new THREE.Points(trailGeo, new THREE.PointsMaterial({
+  size: 0.09, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+})));
+let trailInit = false;
 
-    function stop() { clearInterval(timer); timer = null; }
+// 카메라 모드: C 키 또는 클릭 버튼으로 우주선 추적 전환
+let follow = false;
+const toggleFollow = () => {
+  follow = !follow;
+  controls.enabled = !follow;
+  btn.textContent = follow ? '자유 시점' : '우주선 추적';
+};
+const btn = document.createElement('button');
+btn.textContent = '우주선 추적';
+btn.style.cssText = 'position:fixed;right:16px;bottom:12px;padding:8px 14px;border:1px solid #5566aa;border-radius:8px;background:#11163a;color:#cfd6ff;font:13px system-ui;cursor:pointer';
+btn.onclick = toggleFollow;
+document.body.appendChild(btn);
+addEventListener('keydown', e => { if (e.key.toLowerCase() === 'c') toggleFollow(); });
 
-    function start() {
-      stop();
-      timer = setInterval(() => show(index + 1), INTERVAL_MS);
-    }
+const _p = new THREE.Vector3(), _q = new THREE.Vector3(), _cam = new THREE.Vector3();
+const clock = new THREE.Clock(false);
+const animate = () => {
+  const t = clock.getElapsedTime();
 
-    function show(i) {
-      index = (i + hits.length) % hits.length;
-      const h = hits[index];
-      const frame = $('frame');
-      frame.href = h.pageURL;
-      const img = document.createElement('img');
-      img.src = h.webformatURL;
-      img.alt = h.tags;
-      frame.replaceChildren(img);
-      $('status').textContent = `"${query}" · ${index + 1} / ${hits.length}`;
-      [...$('dots').children].forEach((d, n) => d.classList.toggle('on', n === index));
-    }
+  const u = (t * 0.02) % 1;
+  shipPath.getPointAt(u, _p);
+  shipPath.getPointAt((u + 0.004) % 1, _q);
+  ship.position.copy(_p);
+  ship.lookAt(_q);
+  ship.rotateZ(Math.sin(t * 0.7) * 0.35);    // 완만한 롤
+  flame.scale.set(1, 0.8 + Math.random() * 0.5, 1);
 
-    function preload(list) {
-      return Promise.all(list.map((h) => new Promise((resolve) => {
-        const img = new Image();
-        img.onload = img.onerror = resolve;
-        img.src = h.webformatURL;
-      })));
-    }
+  // 꼬리: 기록을 한 칸씩 뒤로 밀고 맨 앞에 현재 위치
+  trailPos.copyWithin(3, 0, (TRAIL - 1) * 3);
+  if (!trailInit) { for (let i = 0; i < TRAIL; i++) trailPos.set([_p.x, _p.y, _p.z], i * 3); trailInit = true; }
+  trailPos.set([_p.x, _p.y, _p.z], 0);
+  for (let i = 0; i < TRAIL; i++) {
+    const f = 1 - i / TRAIL;
+    trailCol.set([0.3 * f, 0.7 * f, 1 * f], i * 3);
+  }
+  trailGeo.attributes.position.needsUpdate = true;
+  trailGeo.attributes.color.needsUpdate = true;
 
-    async function search() {
-      const id = ++searchId;
-      stop();
-      $('status').textContent = '불러오는 중…';
-      $('prev').disabled = $('next').disabled = true;
-      try {
-        // 서버(Vercel)에서는 /api/pixabay 로, 파일(file://)로 열었을 때는 입력한 키로 Pixabay 에 직접 요청
-        const res = await fetch(LOCAL_MODE
-          ? 'https://pixabay.com/api/?' + new URLSearchParams({
-              key: $('localKey').value.trim(), q: query, image_type: 'photo', per_page: 10, page: 1,
-            })
-          : '/api/pixabay?' + new URLSearchParams({ q: query, page: 1 }));
-        const raw = await res.text();
-        let data = {};
-        try { data = JSON.parse(raw); } catch (_) {}
-        if (!res.ok) {
-          throw new Error(data.error || (LOCAL_MODE && res.status === 400 ? 'API 키를 확인해 주세요.' : '요청 실패 (' + res.status + ')'));
-        }
-        if (id !== searchId) return;
-        if (!data.hits.length) {
-          hits = [];
-          $('frame').replaceChildren(Object.assign(document.createElement('div'), { className: 'empty', textContent: '검색 결과가 없습니다.' }));
-          $('dots').replaceChildren();
-          $('status').textContent = '';
-          return;
-        }
-        await preload(data.hits);
-        if (id !== searchId) return;
-        hits = data.hits;
-        $('dots').replaceChildren(...hits.map(() => document.createElement('span')));
-        $('prev').disabled = $('next').disabled = false;
-        show(0);
-        start();
-      } catch (e) {
-        $('status').textContent = '⚠️ ' + e.message;
-      }
-    }
+  if (follow) {
+    _cam.set(0, 1.2, -4).applyMatrix4(ship.matrixWorld);
+    camera.position.lerp(_cam, 0.08);
+    _q.set(0, 0, 6).applyMatrix4(ship.matrixWorld);
+    camera.lookAt(_q);
+  }
 
-    if (LOCAL_MODE) { $('localKey').hidden = false; $('localKey').required = true; }
+  galaxy.rotation.y = t * 0.05;
+  knot.rotation.x = t * 0.5;
+  knot.rotation.y = t * 0.8;
+  knot.scale.setScalar(1 + Math.sin(t * 2) * 0.06);
+  light.intensity = 40 + Math.sin(t * 3) * 8;
+  for (const p of planets) {
+    const a = t * p.s;
+    p.mesh.position.set(Math.cos(a) * p.r, Math.sin(a * 2) * 0.3, Math.sin(a) * p.r);
+  }
+  if (!follow) controls.update();
+  renderer.render(scene, camera);
+};
 
-    $('form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      query = $('query').value.trim();
-      if (query) search();
-    });
-    $('prev').addEventListener('click', () => { show(index - 1); start(); });
-    $('next').addEventListener('click', () => { show(index + 1); start(); });
-  </script>
+// 시작 화면: 버튼을 누르면 애니메이션 실행
+renderer.render(scene, camera);
+const startBtn = document.getElementById('start');
+startBtn.addEventListener('click', () => {
+  document.getElementById('intro').remove();
+  clock.start();
+  renderer.setAnimationLoop(animate);
+});
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
 </body>
 </html>
