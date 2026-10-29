@@ -1,6 +1,10 @@
 // Supabase Auth 의 영어 오류 메시지를 알기 쉬운 한국어로 바꿉니다.
 export function koreanAuthError(error) {
   const msg = (error?.message || String(error || '')).toLowerCase()
+  if (msg.includes('database error saving new user')) return '가입 처리 중 DB 오류예요. Supabase SQL Editor에서 supabase/schema.sql 을 실행했는지 확인해 주세요.'
+  if (msg.includes('signups not allowed') || msg.includes('signup is disabled')) return 'Supabase에서 회원가입이 꺼져 있어요. (Authentication → Sign In / Providers → "Allow new users to sign up" 켜기)'
+  if (msg.includes('email rate limit')) return '인증 메일 발송 한도를 넘었어요. 잠시(약 1시간) 뒤 다시 시도하거나, Supabase에서 Confirm email 을 끄거나 Custom SMTP 를 설정해 주세요.'
+  if (msg.includes('invalid api key') || msg.includes('apikey')) return 'Supabase 키가 올바르지 않아요. Vercel 환경변수 VITE_SUPABASE_ANON_KEY 를 확인하고 Redeploy 해 주세요.'
   if (msg.includes('invalid login credentials')) return '이메일 또는 비밀번호가 올바르지 않아요.'
   if (msg.includes('email not confirmed')) return '이메일 인증이 아직이에요. 받은 편지함의 인증 메일을 눌러 주세요.'
   if (msg.includes('user already registered') || msg.includes('already been registered')) return '이미 가입된 이메일이에요. 로그인해 주세요.'

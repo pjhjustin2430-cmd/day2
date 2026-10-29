@@ -42,6 +42,8 @@ jeju-ip/
    - Database Password 는 **Generate a password** 로 강력하게 만들고 안전한 곳에 저장 (앱에는 쓰지 않습니다).
 2. 왼쪽 **SQL Editor → New query** → [`supabase/schema.sql`](supabase/schema.sql) 내용을 전부 붙여 넣고 **Run**.
    - `profiles`, `favorites` 테이블, RLS 정책, 가입 시 프로필 자동 생성 트리거가 만들어집니다.
+   - **장바구니/상점을 쓰려면** 이어서 [`supabase/cart.sql`](supabase/cart.sql) 도 새 쿼리로 붙여 넣고 **Run** 합니다.
+     (`products` 샘플 상품 8개, `cart_items`, `add_to_cart` 함수, RLS 가 만들어집니다)
 3. **Authentication → Providers → Email** 이 켜져 있는지 확인.
    - 개발 중 이메일 인증 메일이 번거로우면 **Confirm email** 을 잠시 끄세요. (운영에서는 켜 두기)
 4. **Authentication → URL Configuration**

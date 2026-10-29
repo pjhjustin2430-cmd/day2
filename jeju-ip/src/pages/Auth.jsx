@@ -38,7 +38,10 @@ export default function Auth({ mode }) {
         navigate(from, { replace: true })
       }
     } catch (err) {
-      setError(koreanAuthError(err))
+      // 원인 파악을 위해 Supabase 가 돌려준 원본 메시지를 함께 보여 줍니다.
+      console.error('[auth]', err)
+      const raw = err?.message ? ` [${err.status ? err.status + ' · ' : ''}${err.message}]` : ''
+      setError(koreanAuthError(err) + raw)
     } finally {
       setBusy(false)
     }

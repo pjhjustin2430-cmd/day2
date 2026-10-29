@@ -10,6 +10,9 @@ import IPDetail from './pages/IPDetail.jsx'
 import Auth from './pages/Auth.jsx'
 import ResetPassword from './pages/ResetPassword.jsx'
 import Favorites from './pages/Favorites.jsx'
+import Shop from './pages/Shop.jsx'
+import Cart from './pages/Cart.jsx'
+import Toast from './components/Toast.jsx'
 import Account from './pages/Account.jsx'
 import NotFound from './pages/NotFound.jsx'
 
@@ -42,12 +45,15 @@ export default function App() {
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/cart" element={<Protected><Cart /></Protected>} />
           <Route path="/favorites" element={<Protected><Favorites /></Protected>} />
           <Route path="/account" element={<Protected><Account /></Protected>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />
+      <Toast />
     </>
   )
 }

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useCart } from '../context/CartContext.jsx'
 
 export default function Header() {
   const { user, nickname, signOut } = useAuth()
+  const { count } = useCart()
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const close = () => setOpen(false)
@@ -22,8 +24,12 @@ export default function Header() {
         <button className="menu-btn" aria-label="메뉴" onClick={() => setOpen((o) => !o)}>{open ? '✕' : '☰'}</button>
         <nav className={`nav ${open ? 'open' : ''}`}>
           <NavLink to="/ip" onClick={close}>IP 갤러리</NavLink>
+          <NavLink to="/shop" onClick={close}>🛍️ 상점</NavLink>
           {user && <NavLink to="/favorites" onClick={close}>♥ 내 즐겨찾기</NavLink>}
           <span className="nav-spacer" />
+          <NavLink to="/cart" className="nav-cart" onClick={close} aria-label="장바구니">
+            🛒{count > 0 && <span className="badge">{count > 99 ? '99+' : count}</span>}
+          </NavLink>
           {user ? (
             <>
               <NavLink to="/account" className="nav-user" onClick={close}>👤 {nickname}</NavLink>
