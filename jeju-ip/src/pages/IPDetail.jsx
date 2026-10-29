@@ -8,7 +8,7 @@ export default function IPDetail() {
   const { slug } = useParams()
   const ip = findIp(slug)
   // 훅은 조건문 밖에서 호출해야 하므로 ip 가 없을 때를 위해 빈 검색어 배열을 넘깁니다.
-  const { hits, loading, error } = usePixabay(ip ? ip.queries : ['jeju'], 12, 8)
+  const { hits, loading, error } = usePixabay(ip ? ip.queries : ['jeju'], 12, ip?.filter ? 6 : 8, ip?.filter)
   if (!ip) return <NotFound />
 
   return (

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { usePixabay } from '../hooks/usePixabay'
 
 export default function IPCard({ ip }) {
-  const { hits, loading } = usePixabay(ip.queries, 3, 1)
+  const { hits, loading } = usePixabay(ip.queries, 3, 1, ip.filter)
   const cover = hits[0]?.webformatURL
   return (
     <Link to={`/ip/${ip.slug}`} className="ip-card" style={{ '--accent': ip.color }}>

@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
-import { IPS } from '../data/ips'
+import { IPS, HERO } from '../data/ips'
 import IPCard from '../components/IPCard.jsx'
 import { usePixabay } from '../hooks/usePixabay'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function Home() {
-  const { hits } = usePixabay(['jeju island', 'jeju', 'korea island coast'], 6, 1)
+  const { hits } = usePixabay(HERO.queries, 6, 1, HERO.filter)
   const { user, nickname } = useAuth()
   const hero = hits[0]?.largeImageURL
 
