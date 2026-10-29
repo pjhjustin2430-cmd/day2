@@ -11,6 +11,7 @@ import Auth from './pages/Auth.jsx'
 import ResetPassword from './pages/ResetPassword.jsx'
 import Favorites from './pages/Favorites.jsx'
 import Shop from './pages/Shop.jsx'
+import Stats from './pages/Stats.jsx'
 import Cart from './pages/Cart.jsx'
 import Toast from './components/Toast.jsx'
 import Account from './pages/Account.jsx'
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/stats" element={<Stats />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/cart" element={<Protected><Cart /></Protected>} />
           <Route path="/favorites" element={<Protected><Favorites /></Protected>} />

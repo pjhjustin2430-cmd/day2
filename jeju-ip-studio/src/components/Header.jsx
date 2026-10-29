@@ -24,6 +24,7 @@ export default function Header() {
         <button className="menu-btn" aria-label="메뉴" onClick={() => setOpen((o) => !o)}>{open ? '✕' : '☰'}</button>
         <nav className={`nav ${open ? 'open' : ''}`}>
           <NavLink to="/ip" onClick={close}>IP 갤러리</NavLink>
+          <NavLink to="/stats" onClick={close}>📊 관람객 통계</NavLink>
           <NavLink to="/shop" onClick={close}>🛍️ 상점</NavLink>
           {user && <NavLink to="/favorites" onClick={close}>♥ 내 즐겨찾기</NavLink>}
           <span className="nav-spacer" />

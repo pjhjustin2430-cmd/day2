@@ -201,6 +201,52 @@ code { background: rgba(0, 0, 0, .06); padding: 1px 6px; border-radius: 6px; fon
   .cart-row .icon-btn { grid-area: del; }
 }
 
+/* 관람객 통계 */
+.spot-chips { margin-bottom: 18px; }
+.chip-btn { cursor: pointer; font: inherit; }
+.chip-btn.on { color: #fff; }
+.stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.stat-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px; display: flex; flex-direction: column; gap: 2px; }
+.stat-card span { color: var(--muted); font-size: 13px; }
+.stat-card strong { font-family: 'Jua', sans-serif; font-weight: 400; font-size: 28px; }
+.stat-card em { font-style: normal; font-size: 13px; color: var(--muted); }
+.stat-card em.up { color: #d9480f; }
+.stat-card em.down { color: #1971c2; }
+.panel { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px 14px; margin-bottom: 18px; }
+.panel h2 { font-size: 22px; margin: 0 0 8px; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+.panel-head h2 { margin: 0; }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; }
+.seg button { border: 0; background: #fff; padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; }
+.seg button.on { background: var(--ocean); color: #fff; }
+.two-col { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; }
+.chart-wrap { width: 100%; }
+.chart { width: 100%; height: auto; display: block; }
+.grid-line { stroke: #ece6d8; stroke-width: 1; }
+.axis-text { fill: #8a8f96; font-size: 12px; font-family: 'Noto Sans KR', sans-serif; }
+.tip-box { fill: rgba(30, 36, 40, .94); }
+.tip-title { fill: #cfd6dc; font-size: 12px; }
+.tip-value { fill: #fff; font-size: 15px; font-weight: 700; }
+.tip-note { fill: #ffd8a8; font-size: 10.5px; }
+.chart-note { color: var(--muted); font-size: 12.5px; margin: 6px 0 4px; }
+.rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.rank-row { width: 100%; display: grid; grid-template-columns: 22px 150px 1fr 86px; gap: 10px; align-items: center; background: transparent; border: 0; border-radius: 10px; padding: 8px 6px; cursor: pointer; font: inherit; text-align: left; }
+.rank-row:hover, .rank-row.on { background: var(--sand); }
+.rank-no { color: var(--muted); font-size: 13px; }
+.rank-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-bar { height: 12px; background: #f1ece0; border-radius: 99px; overflow: hidden; }
+.rank-bar i { display: block; height: 100%; border-radius: 99px; }
+.rank-val { text-align: right; font-weight: 700; font-size: 14px; }
+.rank-val small { font-weight: 400; color: var(--muted); }
+.table-panel summary { cursor: pointer; font-weight: 700; }
+.table-scroll { overflow-x: auto; margin-top: 10px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th, .data-table td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.data-table th:first-child, .data-table td:first-child { text-align: left; }
+.data-table thead th { background: var(--sand); }
+.source { color: var(--muted); font-size: 12.5px; margin: 14px 0 0; }
+@media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } .rank-row { grid-template-columns: 20px 112px 1fr 76px; gap: 6px; } }
+
 /* 푸터 */
 .footer { text-align: center; padding: 36px 16px 48px; border-top: 1px solid var(--line); background: #fff; font-size: 14px; }
 .footer p { margin: 4px 0; }

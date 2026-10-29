@@ -29,6 +29,7 @@ jeju-ip-studio/
 | `VITE_SUPABASE_URL` | Supabase → Project Settings → API → **Project URL** | O (정상) | Supabase 연결 주소 |
 | `VITE_SUPABASE_ANON_KEY` | 같은 화면의 **anon public** 키 (새 UI: Publishable key) | O (정상) | 로그인/DB 호출 (RLS 가 보호) |
 | `PIXABAY_API_KEY` | https://pixabay.com/api/docs/ (로그인 후 Your API key) | **X (서버 전용)** | 이미지 검색 |
+| `DATA_GO_KR_API_KEY` | 공공데이터포털 → 마이페이지 → 데이터 활용 → 활용신청 현황 → 「서귀포시_직영관광지 관람객수 추이」 → **일반 인증키** | **X (서버 전용)** | `/stats` 관람객 통계 페이지 |
 
 > ⚠️ **절대 넣지 말 것**: `service_role` / `secret` 키, 데이터베이스 비밀번호, 연결 문자열(`postgresql://...`).
 > 이 앱은 DB 비밀번호가 필요 없습니다. `VITE_` 로 시작하는 변수는 빌드 결과(JS)에 그대로 들어가 누구나 볼 수 있습니다.
@@ -57,6 +58,14 @@ jeju-ip-studio/
 1. https://pixabay.com 가입/로그인 → https://pixabay.com/api/docs/ 이동
 2. 문서 상단 **Parameters → key** 옆에 보이는 본인 API 키를 복사합니다.
 3. (약관) 결과는 24시간 캐싱, 사진 작가 크레딧 표기를 권장합니다. 이 프로젝트는 둘 다 처리해 둠.
+
+## 2-1단계. 공공데이터포털 API 키 (관람객 통계 페이지용)
+
+1. https://www.data.go.kr 로그인 → **마이페이지 → 데이터 활용 → Open API → 활용신청 현황**
+2. 「제주특별자치도 서귀포시_직영관광지 관람객수 추이」 를 열어 **일반 인증키**를 복사 (승인 상태여야 함)
+3. 환경변수 이름은 `DATA_GO_KR_API_KEY` (**VITE_ 금지**). 키는 서버리스 함수(`api/visitors.js`)에서만 사용되며,
+   인증키를 URL 이 아닌 `Authorization: Infuser <키>` 헤더로 보냅니다.
+4. 이 키는 채팅·스크린샷·GitHub 에 올리지 마세요. 노출됐다면 포털에서 재발급하세요.
 
 ## 3단계. 로컬 실행
 
@@ -105,6 +114,7 @@ git push
    | `VITE_SUPABASE_URL` | Supabase Project URL |
    | `VITE_SUPABASE_ANON_KEY` | anon / publishable 키 |
    | `PIXABAY_API_KEY` | Pixabay 키 |
+   | `DATA_GO_KR_API_KEY` | 공공데이터포털 일반 인증키 (관람객 통계용) |
 
 3. **Deploy**. 완료되면 `https://프로젝트명.vercel.app` 주소가 생깁니다.
 4. 환경변수를 나중에 바꾸면 **Deployments → … → Redeploy** 해야 반영됩니다 (빌드 시점에 주입되는 값이라서).
