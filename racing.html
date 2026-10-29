@@ -38,6 +38,16 @@
   #nitroBar { height: 8px; border-radius: 5px; background: rgba(14,20,28,.55); border: 1px solid rgba(255,255,255,.25); overflow: hidden; }
   #nitro { height: 100%; width: 0; background: #5fd4ff; transition: background .15s; }
   #nitro.on { background: #ffb347; }
+  #itemBox { position: absolute; left: 18px; bottom: 20px; padding: 8px 18px 8px 12px; display: flex; align-items: center; gap: 12px; min-width: 190px; }
+  #itemIcon { font-size: 40px; line-height: 1; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 10px; background: rgba(255,255,255,.1); }
+  #itemName { font-size: 14px; font-weight: 700; }
+  #itemKey { font-size: 11px; opacity: .65; letter-spacing: .14em; margin-top: 2px; }
+  #itemBox.roll #itemIcon { animation: rollIcon .12s infinite; }
+  #itemBox.empty { opacity: .6; }
+  @keyframes rollIcon { 50% { transform: translateY(-4px); } }
+  #flash { position: fixed; inset: 0; background: #fff6b0; opacity: 0; pointer-events: none; z-index: 5; }
+  #flash.on { animation: flash .55s ease-out; }
+  @keyframes flash { 0% { opacity: .85; } 100% { opacity: 0; } }
   #lights { position: fixed; left: 50%; top: 96px; transform: translateX(-50%); display: none; gap: 14px; padding: 10px 18px; border-radius: 14px; background: rgba(10,12,16,.7); border: 1px solid rgba(255,255,255,.12); z-index: 6; }
   #lights i { width: 34px; height: 34px; border-radius: 50%; background: #2a1414; box-shadow: inset 0 2px 6px rgba(0,0,0,.6); transition: background .05s; }
   #lights i.on { background: #ff2b1f; box-shadow: 0 0 18px 4px rgba(255,43,31,.65), inset 0 2px 6px rgba(255,160,150,.6); }
@@ -69,7 +79,7 @@
   #touch .grp { display: flex; gap: 10px; pointer-events: auto; }
   #touch button { width: 68px; height: 68px; border-radius: 50%; border: 1px solid rgba(255,255,255,.4); background: rgba(14,20,28,.55); color: #fff; font-size: 24px; }
   #touch button.on { background: rgba(255,179,71,.85); color: #1a1208; }
-  @media (pointer: coarse) { #touch { display: flex; } #speedBox { bottom: 100px; } #nitroBox { bottom: 104px; } }
+  @media (pointer: coarse) { #touch { display: flex; } #speedBox { bottom: 100px; } #nitroBox { bottom: 104px; } #itemBox { bottom: 100px; } }
   @media (max-width: 640px) { .overlay h1 { font-size: 40px; } #mini { width: 100px; height: 100px; } #board { display: none; } #speed { font-size: 52px; } #speedBox { min-width: 150px; } #pos { font-size: 40px; } }
 </style>
 <script type="importmap">
@@ -91,21 +101,23 @@
     <div id="gearRow"><div id="gear" class="num">1</div><div id="rpmBar"><div id="rpm"></div></div></div>
   </div>
   <div id="nitroBox"><div class="lbl">NITRO</div><div id="nitroBar"><div id="nitro"></div></div></div>
+  <div id="itemBox" class="glass empty"><div id="itemIcon">–</div><div><div id="itemName">아이템 없음</div><div id="itemKey">E / ENTER</div></div></div>
 </div>
 <div id="lights"><i></i><i></i><i></i><i></i><i></i></div>
 <div id="toast" class="num"></div>
 <div id="drift" class="num"></div>
+<div id="flash"></div>
 <div id="wrong">WRONG WAY</div>
 <div id="touch">
   <div class="grp"><button id="tL">◀</button><button id="tR">▶</button></div>
-  <div class="grp"><button id="tB">■</button><button id="tN">N</button></div>
+  <div class="grp"><button id="tB">■</button><button id="tN">N</button><button id="tI">E</button></div>
 </div>
 
 <div id="menu" class="overlay">
   <h1>JEJU <span>COAST</span> GP</h1>
   <p>제주 해안을 달리는 3D 레이싱 · 3랩 · 6대 경쟁</p>
   <div class="diff" id="diff"><button data-k="0.9">쉬움</button><button data-k="1" class="sel">보통</button><button data-k="1.08">어려움</button></div>
-  <div class="keys glass">↑ / W 가속 &nbsp;·&nbsp; ↓ / S 브레이크 &nbsp;·&nbsp; ← → / A D 조향<br>Shift 핸드브레이크 &nbsp;·&nbsp; Space 니트로 &nbsp;·&nbsp; R 코스 복귀 &nbsp;·&nbsp; M 소리<br>드리프트하면 니트로가 충전되고, 파란 부스트 패드를 밟으면 가속합니다.</div>
+  <div class="keys glass">↑ / W 가속 &nbsp;·&nbsp; ↓ / S 브레이크 &nbsp;·&nbsp; ← → / A D 조향<br>Shift 핸드브레이크 &nbsp;·&nbsp; Space 니트로 &nbsp;·&nbsp; E / Enter 아이템 사용 &nbsp;·&nbsp; R 코스 복귀 &nbsp;·&nbsp; M 소리<br>드리프트하면 니트로가 충전되고, 파란 부스트 패드를 밟으면 가속합니다.<br>트랙 위 주황색 <b>?</b> 박스를 먹으면 아이템 획득: 🍊 미사일 · 🍋 껍질 · 🛡️ 방어막 · 🔥 터보 · ⚡ 번개</div>
   <button id="start" class="btn">RACE START</button>
 </div>
 <div id="result" class="overlay hidden">
@@ -168,6 +180,11 @@ const Snd = (() => {
     beep: (go = false) => go ? (tone(880, 0.55, 'sine', 0.3), tone(1320, 0.55, 'sine', 0.2)) : tone(520, 0.2, 'sine', 0.25),
     boost: () => { tone(300, 0.5, 'sawtooth', 0.18, 3); },
     bump: () => { tone(110, 0.15, 'square', 0.25, 0.4); },
+    pickup: () => [700, 900, 1200].forEach((f, i) => tone(f, 0.12, 'triangle', 0.2, 0, i * 0.06)),
+    shot: () => { tone(520, 0.3, 'sawtooth', 0.18, 2.5); },
+    hit: () => { tone(160, 0.35, 'sawtooth', 0.3, 0.3); tone(90, 0.3, 'square', 0.25, 0.5); },
+    shield: () => { tone(800, 0.35, 'sine', 0.22, 1.6); tone(1200, 0.3, 'sine', 0.12, 1.3); },
+    zap: () => { tone(1900, 0.35, 'sawtooth', 0.22, 0.15); tone(240, 0.4, 'square', 0.2, 0.4); },
     lap: () => [660, 880].forEach((f, i) => tone(f, 0.25, 'sine', 0.22, 0, i * 0.1)),
     finish: () => [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.4, 'sine', 0.22, 0, i * 0.14)),
     setMuted(m) { muted = m; if (master) master.gain.value = m ? 0 : 0.6; },
@@ -398,6 +415,26 @@ const pads = [];
   m.rotation.x = -Math.PI / 2; const g = new THREE.Group(); g.add(m); g.position.set(s.x, 0.05, s.z); g.rotation.y = Math.atan2(s.tx, s.tz); scene.add(g); pads.push({ idx });
 });
 
+// 아이템 박스 (트랙 위 5개 구간 × 3줄)
+const ITEMS = {
+  missile: { icon: '🍊', name: '감귤 미사일' }, peel: { icon: '🍋', name: '귤 껍질' }, shield: { icon: '🛡️', name: '한라봉 방어막' },
+  turbo: { icon: '🔥', name: '레드향 터보' }, zap: { icon: '⚡', name: '천혜향 번개' },
+};
+const boxTex = mkTex(128, (x, s) => {
+  const g = x.createLinearGradient(0, 0, s, s); g.addColorStop(0, '#ffb347'); g.addColorStop(1, '#ff7a12'); x.fillStyle = g; x.fillRect(0, 0, s, s);
+  x.strokeStyle = 'rgba(255,255,255,.75)'; x.lineWidth = 8; x.strokeRect(6, 6, s - 12, s - 12);
+  x.fillStyle = '#fff'; x.font = 'bold 84px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('?', s / 2, s / 2 + 6);
+});
+const boxGeo = new THREE.BoxGeometry(1.3, 1.3, 1.3), boxMat = new THREE.MeshStandardMaterial({ map: boxTex, emissive: 0xff8a1f, emissiveMap: boxTex, emissiveIntensity: 0.3, roughness: 0.3, metalness: 0.1 });
+const itemBoxes = [];
+[0.06, 0.27, 0.5, 0.7, 0.88].forEach(f => {
+  const s = S[Math.floor(f * N)];
+  for (const lat of [-4.5, 0, 4.5]) {
+    const m = new THREE.Mesh(boxGeo, boxMat); m.castShadow = true; m.position.set(s.x + s.lx * lat, 1.3, s.z + s.lz * lat); scene.add(m);
+    itemBoxes.push({ m, x: m.position.x, z: m.position.z, t: 0 });
+  }
+});
+
 // 관중석
 {
   const s0 = S[0], h0 = Math.atan2(s0.tx, s0.tz), stepM = new THREE.MeshStandardMaterial({ color: 0x9aa4ae, roughness: 0.9 }), info = [];
@@ -576,7 +613,9 @@ function makeCarMesh(color) {
   }
   const flame = new THREE.Mesh(new THREE.ConeGeometry(0.28, 1.8, 12), new THREE.MeshBasicMaterial({ color: 0x7fd0ff, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false }));
   flame.rotation.x = -Math.PI / 2; flame.position.set(0, 0.62, -3.1); flame.visible = false; body.add(flame);
-  scene.add(root); return { root, body, wheels, flame, tl };
+  const shield = new THREE.Mesh(new THREE.SphereGeometry(2.7, 28, 18), new THREE.MeshBasicMaterial({ color: 0x8fd8ff, transparent: true, opacity: 0.2, depthWrite: false, blending: THREE.AdditiveBlending }));
+  shield.position.y = 0.9; shield.scale.set(0.75, 0.6, 1.05); shield.visible = false; root.add(shield);
+  scene.add(root); return { root, body, wheels, flame, tl, shield };
 }
 
 const AI_DEF = [['돌하르방', 0xc62828], ['감귤이', 0xf5b400], ['한라봉', 0x2e8b57], ['해녀', 0x7b3fa0], ['바람이', 0xe9edf2]];
@@ -585,7 +624,8 @@ const cars = [];
 function makeCar(name, color, ai) {
   const m = makeCarMesh(color);
   const c = { name, color, ai, m, x: 0, z: 0, h: 0, vx: 0, vz: 0, speed: 0, vf: 0, vr: 0, idx: 0, lap: 0, lat: 0, progress: 0, boost: 0, padCD: 0, nitro: ai ? 0 : 30, nitroOn: false,
-    maxSpeed: 52, skill: 1, lane: 0, finished: false, finishT: 0, lapStart: 0, best: Infinity, stuck: 0, steerVis: 0, slip: 0, bump: 0, rank: 1, braking: false };
+    maxSpeed: 52, skill: 1, lane: 0, finished: false, finishT: 0, lapStart: 0, best: Infinity, stuck: 0, steerVis: 0, slip: 0, bump: 0, rank: 1, braking: false,
+    item: null, itemRoll: 0, itemT: 0, itemAge: 0, shield: 0, spinT: 0, slowT: 0, hitCD: 0 };
   cars.push(c); return c;
 }
 const player = makeCar('나', 0xff7a12, false);
@@ -595,7 +635,8 @@ function gridPlace() {
   cars.forEach((c, k) => {
     const i = (N - 7 - Math.floor(k / 2) * 5 + N) % N, s = S[i], lat = (k % 2 ? -1 : 1) * 3.3;
     c.x = s.x + s.lx * lat; c.z = s.z + s.lz * lat; c.h = Math.atan2(s.tx, s.tz);
-    Object.assign(c, { vx: 0, vz: 0, vf: 0, vr: 0, speed: 0, idx: i, lap: 0, lat, progress: i, boost: 0, padCD: 0, nitro: c.ai ? 0 : 30, nitroOn: false, finished: false, finishT: 0, lapStart: 0, best: Infinity, stuck: 0, ai: c !== player, lane: lat * 0.6, bump: 0 });
+    Object.assign(c, { vx: 0, vz: 0, vf: 0, vr: 0, speed: 0, idx: i, lap: 0, lat, progress: i, boost: 0, padCD: 0, nitro: c.ai ? 0 : 30, nitroOn: false, finished: false, finishT: 0, lapStart: 0, best: Infinity, stuck: 0, ai: c !== player, lane: lat * 0.6, bump: 0,
+      item: null, itemRoll: 0, itemT: 0, itemAge: 0, shield: 0, spinT: 0, slowT: 0, hitCD: 0 });
     if (c !== player) { c.skill = c.base * diff; c.maxSpeed = 46 + (c.skill - 0.85) * 28; }
     c.maxSpeed = c === player ? 52 : c.maxSpeed;
   });
@@ -603,10 +644,11 @@ function gridPlace() {
 
 // ═════════════ 물리 ═════════════
 function stepCar(c, inp, dt) {
+  if (c.spinT > 0) inp = { throttle: 0, brake: 0, steer: 0, nitro: false, hand: false };   // 스핀아웃 중 조작 불가
   const f0 = Math.sin(c.h), f1 = Math.cos(c.h), l0 = f1, l1 = -f0;
   let vf = c.vx * f0 + c.vz * f1, vr = c.vx * l0 + c.vz * l1;
   const onRoad = Math.abs(c.lat) < HALF + 1.2, nitro = inp.nitro && c.nitro > 0;
-  const maxV = (onRoad ? c.maxSpeed : 32) * (c.boost > 0 ? 1.32 : 1) * (nitro ? 1.28 : 1);
+  const maxV = (onRoad ? c.maxSpeed : 32) * (c.boost > 0 ? 1.32 : 1) * (nitro ? 1.28 : 1) * (c.slowT > 0 ? 0.55 : 1);
   if (inp.throttle > 0 && vf < maxV) vf += (34 * (1 - vf / (maxV * 1.06)) * inp.throttle + (nitro ? 22 : 0) + (c.boost > 0 ? 28 : 0)) * dt;
   if (inp.brake > 0) vf -= (vf > 0.5 ? 62 : 16) * inp.brake * dt;
   if (vf < -14) vf = -14;
@@ -621,6 +663,7 @@ function stepCar(c, inp, dt) {
   if (nitro) c.nitro = Math.max(0, c.nitro - 30 * dt);
   else c.nitro = Math.min(100, c.nitro + (Math.abs(vr) > 3 ? 14 : 2.5) * dt * (c.ai ? 0 : 1));
   c.nitroOn = !!nitro; if (c.boost > 0) c.boost -= dt; if (c.padCD > 0) c.padCD -= dt;
+  if (c.spinT > 0) c.spinT -= dt; if (c.slowT > 0) c.slowT -= dt; if (c.shield > 0) c.shield -= dt; if (c.hitCD > 0) c.hitCD -= dt;
   c.steerVis += (inp.steer * 0.45 - c.steerVis) * Math.min(1, dt * 10);
 }
 
@@ -692,6 +735,130 @@ function collide() {
   }
 }
 
+// ═════════════ 아이템 ═════════════
+const hazards = [], bolts = [];
+let useLatch = false;
+const msGeo = new THREE.SphereGeometry(0.42, 16, 12), msMat = new THREE.MeshStandardMaterial({ color: 0xff8a1f, emissive: 0xff6a00, emissiveIntensity: 0.8, roughness: 0.4 });
+const leafG = new THREE.SphereGeometry(0.16, 8, 6), leafM = new THREE.MeshStandardMaterial({ color: 0x3fbf5a, roughness: 0.6 });
+const peelG = new THREE.TorusGeometry(0.5, 0.2, 8, 18), peelM = new THREE.MeshStandardMaterial({ color: 0xffe14d, roughness: 0.5, emissive: 0x806000, emissiveIntensity: 0.35 });
+const boltG = new THREE.CylinderGeometry(0.22, 0.22, 46, 6);
+function flashScreen() { const f = $('flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
+
+function nearestIdx(x, z, idx) {
+  let best = Infinity, bi = idx;
+  for (let k = -20; k <= 20; k++) { const i = (idx + k + N) % N, dx = x - S[i].x, dz = z - S[i].z, d = dx * dx + dz * dz; if (d < best) { best = d; bi = i; } }
+  return bi;
+}
+function chooseItem(c) {
+  const t = (c.rank - 1) / Math.max(1, cars.length - 1);     // 뒤쪽일수록 좋은 아이템
+  const w = { missile: 2 + t, peel: 3 * (1 - t) + 0.5, shield: 2.5 * (1 - t) + 0.8, turbo: 1 + 2 * t, zap: t > 0.4 ? 3 * t : 0 };
+  let r = Math.random() * Object.values(w).reduce((a, b) => a + b, 0);
+  for (const k in w) { r -= w[k]; if (r <= 0) return k; }
+  return 'turbo';
+}
+function hitCar(c) {
+  if (c.hitCD > 0) return false;
+  if (c.shield > 0) {
+    c.shield = 0; c.hitCD = 0.6; spark(c.x, 1.2, c.z, 26);
+    if (c === player) { Snd.shield(); toast('방어막이 막았다!', 1); }
+    return false;
+  }
+  c.spinT = 1.4; c.hitCD = 2.4; c.vx *= 0.35; c.vz *= 0.35; spark(c.x, 0.9, c.z, 30);
+  if (c === player) { Snd.hit(); shake = Math.max(shake, 0.7); toast('스핀아웃!', 1); }
+  return true;
+}
+function fireMissile(c) {
+  const sh = Math.sin(c.h), ch = Math.cos(c.h), g = new THREE.Group();
+  g.add(new THREE.Mesh(msGeo, msMat)); const l = new THREE.Mesh(leafG, leafM); l.scale.set(1.6, 0.3, 0.9); l.position.y = 0.42; g.add(l);
+  g.position.set(c.x + sh * 3, 0.9, c.z + ch * 3); scene.add(g);
+  hazards.push({ kind: 'missile', x: c.x + sh * 3, z: c.z + ch * 3, h: c.h, owner: c, age: 0, life: 5, speed: Math.max(c.speed + 28, 62), idx: c.idx, g });
+}
+function dropPeel(c) {
+  const sh = Math.sin(c.h), ch = Math.cos(c.h), m = new THREE.Mesh(peelG, peelM);
+  m.rotation.x = -Math.PI / 2; m.castShadow = true; m.position.set(c.x - sh * 3.4, 0.22, c.z - ch * 3.4); scene.add(m);
+  hazards.push({ kind: 'peel', x: m.position.x, z: m.position.z, owner: c, age: 0, life: 30, g: m });
+}
+function useItem(c) {
+  const k = c.item; if (!k) return; c.item = null;
+  if (c === player) toast(`${ITEMS[k].icon} ${ITEMS[k].name}`, 0.9);
+  if (k === 'missile') { fireMissile(c); if (c === player) Snd.shot(); }
+  else if (k === 'peel') dropPeel(c);
+  else if (k === 'shield') { c.shield = 10; if (c === player) Snd.shield(); }
+  else if (k === 'turbo') { c.boost = Math.max(c.boost, 2.2); if (c === player) Snd.boost(); }
+  else if (k === 'zap') {
+    Snd.zap(); flashScreen(); shake = Math.max(shake, 0.4);
+    for (const o of cars) {
+      if (o === c) continue;
+      const g = new THREE.Mesh(boltG, new THREE.MeshBasicMaterial({ color: 0xfff3a0, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }));
+      g.position.set(o.x, 23, o.z); scene.add(g); bolts.push({ g, life: 0.35 });
+      if (o.shield > 0) { o.shield = 0; spark(o.x, 1.2, o.z, 20); continue; }
+      o.slowT = 2.4; o.vx *= 0.7; o.vz *= 0.7; spark(o.x, 1, o.z, 24);
+      if (o === player) toast('번개에 맞았다!', 1.1);
+    }
+  }
+}
+function aiItem(c, dt) {
+  c.itemAge += dt; c.itemT -= dt; if (c.itemT > 0) return;
+  const k = c.item, ahead = cars.some(o => o !== c && (o.progress - c.progress) * DS > 6 && (o.progress - c.progress) * DS < 90),
+    behind = cars.some(o => o !== c && (c.progress - o.progress) * DS > 4 && (c.progress - o.progress) * DS < 30);
+  if (k === 'shield' || (k === 'turbo' && S[c.idx].curv < 0.004) || (k === 'missile' && ahead) || (k === 'peel' && (behind || c.itemAge > 12)) || (k === 'zap' && (c.rank > 2 || c.itemAge > 10))) useItem(c);
+  else c.itemT = 0.5;
+}
+function updateItems(dt) {
+  const racing = state === 'race';
+  const now = performance.now() / 1000;
+  for (const b of itemBoxes) {
+    if (b.t > 0) { b.t -= dt; if (b.t <= 0) b.m.visible = true; }
+    if (b.m.visible) { b.m.rotation.y += dt * 1.6; b.m.rotation.x = 0.4; b.m.position.y = 1.3 + Math.sin(now * 2.5 + b.x) * 0.15; }
+  }
+  for (const c of cars) {
+    if (c.itemRoll > 0) c.itemRoll -= dt;
+    if (racing && !c.item) for (const b of itemBoxes) if (b.m.visible && Math.hypot(c.x - b.x, c.z - b.z) < 2.0) {
+      b.m.visible = false; b.t = 6; c.item = chooseItem(c); c.itemRoll = 0.9; c.itemT = rnd(1.2, 3.5); c.itemAge = 0;
+      spark(b.x, 1.3, b.z, 16); if (c === player) Snd.pickup(); break;
+    }
+    if (c.ai && racing && c.item && c.itemRoll <= 0) aiItem(c, dt);
+  }
+  const want = !!(keys.KeyE || keys.Enter || touch.i);
+  if (want && !useLatch && racing && !player.ai && player.item && player.itemRoll <= 0) useItem(player);
+  useLatch = want;
+}
+function updateHazards(dt) {
+  for (let i = hazards.length - 1; i >= 0; i--) {
+    const h = hazards[i]; h.age += dt; let dead = h.age > h.life;
+    if (h.kind === 'missile') {
+      h.idx = nearestIdx(h.x, h.z, h.idx);
+      let tg = null, bd = Infinity;
+      for (const c of cars) {
+        if (c === h.owner) continue;
+        const dx = c.x - h.x, dz = c.z - h.z, d = Math.hypot(dx, dz);
+        if (Math.abs(angDiff(Math.atan2(dx, dz), h.h)) < 1.1 && d < 140 && d < bd) { bd = d; tg = c; }
+      }
+      const s = S[(h.idx + 10) % N], want = tg ? Math.atan2(tg.x - h.x, tg.z - h.z) : Math.atan2(s.x - h.x, s.z - h.z);
+      h.h += clamp(angDiff(want, h.h), -3.5 * dt, 3.5 * dt);
+      h.x += Math.sin(h.h) * h.speed * dt; h.z += Math.cos(h.h) * h.speed * dt;
+      h.g.position.set(h.x, 0.9, h.z); h.g.rotation.y = h.h;
+      sparks.emit(h.x - Math.sin(h.h) * 0.6, 0.9, h.z - Math.cos(h.h) * 0.6, rnd(-0.5, 0.5), rnd(0, 1), rnd(-0.5, 0.5), 0xff9a3a, 0.35, 0.5, 0.8);
+      const sx = S[h.idx], lat = (h.x - sx.x) * sx.lx + (h.z - sx.z) * sx.lz;
+      if (Math.abs(lat) > WALL) { dead = true; spark(h.x, 0.9, h.z, 12); }
+      for (const c of cars) if ((c !== h.owner || h.age > 0.6) && Math.hypot(c.x - h.x, c.z - h.z) < 2.3) { hitCar(c); spark(h.x, 0.9, h.z, 20); dead = true; break; }
+    } else {
+      h.g.rotation.z += dt * 0.6;
+      for (const c of cars) if ((c !== h.owner || h.age > 1) && Math.hypot(c.x - h.x, c.z - h.z) < 1.8) { hitCar(c); spark(h.x, 0.4, h.z, 14); dead = true; break; }
+    }
+    if (dead) { scene.remove(h.g); hazards.splice(i, 1); }
+  }
+  for (let i = bolts.length - 1; i >= 0; i--) {
+    const b = bolts[i]; b.life -= dt; b.g.material.opacity = Math.max(0, b.life / 0.35) * 0.9;
+    if (b.life <= 0) { scene.remove(b.g); b.g.material.dispose(); bolts.splice(i, 1); }
+  }
+}
+function resetItems() {
+  for (const h of hazards) scene.remove(h.g); hazards.length = 0;
+  for (const b of bolts) { scene.remove(b.g); b.g.material.dispose(); } bolts.length = 0;
+  itemBoxes.forEach(b => { b.m.visible = true; b.t = 0; });
+}
+
 // ═════════════ HUD ═════════════
 const mini = $('mini'), mx = mini.getContext('2d');
 let b0x = Infinity, b1x = -Infinity, b0z = Infinity, b1z = -Infinity;
@@ -729,11 +896,18 @@ function updateHud() {
   $('nitro').style.width = player.nitro + '%'; $('nitro').classList.toggle('on', player.nitroOn);
   const s = S[player.idx], dir = Math.sin(player.h) * s.tx + Math.cos(player.h) * s.tz;
   $('wrong').style.display = state === 'race' && dir < -0.3 && player.speed > 4 ? 'block' : 'none';
+  const ib = $('itemBox');
+  if (player.item) {
+    const rolling = player.itemRoll > 0, k = player.item;
+    $('itemIcon').textContent = rolling ? Object.values(ITEMS)[Math.floor(performance.now() / 90) % 5].icon : ITEMS[k].icon;
+    $('itemName').textContent = rolling ? '???' : ITEMS[k].name;
+    ib.classList.toggle('roll', rolling); ib.classList.remove('empty');
+  } else { $('itemIcon').textContent = '–'; $('itemName').textContent = '아이템 없음'; ib.classList.remove('roll'); ib.classList.add('empty'); }
   drawMini();
 }
 
 // ═════════════ 입력 ═════════════
-const keys = {}, touch = { l: 0, r: 0, n: 0, b: 0 };
+const keys = {}, touch = { l: 0, r: 0, n: 0, b: 0, i: 0 };
 addEventListener('keydown', e => {
   keys[e.code] = 1;
   if (e.code === 'KeyR' && state === 'race') resetToTrack(player);
@@ -742,7 +916,7 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => keys[e.code] = 0);
 const bind = (id, k) => { const b = $(id); b.addEventListener('pointerdown', e => { e.preventDefault(); touch[k] = 1; b.classList.add('on'); }); ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, () => { touch[k] = 0; b.classList.remove('on'); })); };
-bind('tL', 'l'); bind('tR', 'r'); bind('tN', 'n'); bind('tB', 'b');
+bind('tL', 'l'); bind('tR', 'r'); bind('tN', 'n'); bind('tB', 'b'); bind('tI', 'i');
 const isTouch = matchMedia('(pointer: coarse)').matches;
 const playerInput = () => ({
   throttle: (keys.ArrowUp || keys.KeyW || (isTouch && !touch.b)) ? 1 : 0,
@@ -755,7 +929,7 @@ const playerInput = () => ({
 document.querySelectorAll('#diff button').forEach(b => b.onclick = () => { document.querySelectorAll('#diff button').forEach(x => x.classList.remove('sel')); b.classList.add('sel'); diff = +b.dataset.k; });
 let camInit = true;
 function startRace() {
-  Snd.init(); gridPlace(); raceT = 0; $('best').textContent = ''; camInit = true;
+  Snd.init(); gridPlace(); resetItems(); raceT = 0; $('best').textContent = ''; camInit = true;
   $('menu').classList.add('hidden'); $('result').classList.add('hidden'); $('hud').classList.remove('hidden');
   state = 'countdown'; cdT = 0; lightsOn = 0;
   const L = $('lights'); L.style.display = 'flex'; L.querySelectorAll('i').forEach(i => i.classList.remove('on'));
@@ -786,12 +960,15 @@ function updateCars(dt) {
     trackUpdate(c);
   }
   if (racing) collide();
+  updateItems(dt);
 
   for (const c of cars) {
     const m = c.m, sh = Math.sin(c.h), ch = Math.cos(c.h);
     m.root.position.set(c.x, 0, c.z); m.root.rotation.y = c.h;
     m.body.rotation.z = clamp(-c.vr * 0.012, -0.1, 0.1); m.body.rotation.x = clamp(-(c.vf - (c.prevVf ?? c.vf)) * 0.02, -0.05, 0.05); c.prevVf = c.vf;
     for (const w of m.wheels) { w.spin.rotation.x += c.vf * dt / 0.43; if (w.front) w.piv.rotation.y = c.steerVis; }
+    m.body.rotation.y = c.spinT > 0 ? (1 - c.spinT / 1.4) * Math.PI * 4 : 0;
+    m.shield.visible = c.shield > 0 && (c.shield > 2 || Math.floor(performance.now() / 100) % 2 === 0);
     m.tl.emissiveIntensity += ((c.braking ? 3.2 : 0.9) - m.tl.emissiveIntensity) * Math.min(1, dt * 20);
     m.flame.visible = c.nitroOn || c.boost > 0; m.flame.scale.set(1, 0.75 + Math.random() * 0.5, 1);
     const onRoad = Math.abs(c.lat) < HALF + 1.2;
@@ -824,6 +1001,7 @@ renderer.setAnimationLoop(() => {
   }
   if (state === 'race') raceT += dt;
   updateCars(dt);
+  updateHazards(dt);
   smoke.update(dt); sparks.update(dt);
 
   const p = player;
@@ -861,7 +1039,6 @@ addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
   smoke.mat.uniforms.uH.value = sparks.mat.uniforms.uH.value = innerHeight * PR;
 });
-camera.aspect = innerWidth / innerHeight;
-</script>
+camera.aspect = innerWidth / innerHeight;</script>
 </body>
 </html>
